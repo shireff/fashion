@@ -47,7 +47,34 @@ export default function OrdersPage() {
   if (error) {
     return (
       <div className="container mx-auto px-6 py-20">
-        <div className="text-center text-red-600">{tCommon("error")}</div>
+        <div className="max-w-lg mx-auto">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center space-y-4">
+            <div className="flex justify-center">
+              <div className="bg-red-100 rounded-full p-4">
+                <svg
+                  className="w-12 h-12 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900">
+              {tCommon("error")}
+            </h3>
+            <p className="text-gray-600">{t("errorLoadingOrders")}</p>
+            <Button onClick={() => window.location.reload()} variant="outline">
+              {tCommon("tryAgain")}
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }

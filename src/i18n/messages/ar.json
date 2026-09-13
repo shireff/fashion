@@ -36,6 +36,15 @@
     "language": "اللغة",
     "switchLanguage": "Switch to English"
   },
+  "error": {
+    "title": "حدث خطأ",
+    "subtitle": "عذراً، حدث خطأ غير متوقع",
+    "description": "نعتذر عن الإزعاج. يبدو أن هناك مشكلة في تحميل هذه الصفحة. يرجى المحاولة مرة أخرى أو العودة إلى الصفحة الرئيسية.",
+    "tryAgain": "إعادة المحاولة",
+    "backHome": "العودة للرئيسية",
+    "errorCode": "رمز الخطأ",
+    "helpText": "إذا استمرت المشكلة، يرجى التواصل مع الدعم الفني"
+  },
   "account": {
     "profile": "الملف الشخصي",
     "name": "الاسم",
@@ -158,12 +167,14 @@
     "noOrders": "لا توجد طلبات",
     "viewDetails": "عرض التفاصيل",
     "cancelOrder": "إلغاء الطلب",
+    "confirmCancel": "هل أنت متأكد من إلغاء هذا الطلب؟",
     "orderDetails": "تفاصيل الطلب",
     "shippingAddress": "عنوان الشحن",
     "summary": "ملخص الطلب",
     "subtotal": "المجموع الفرعي",
     "shipping": "الشحن",
     "quantity": "الكمية",
+    "errorLoadingOrders": "حدث خطأ أثناء تحميل الطلبات. يرجى المحاولة مرة أخرى.",
     "statuses": {
       "pending": "قيد الانتظار",
       "confirmed": "مؤكد",

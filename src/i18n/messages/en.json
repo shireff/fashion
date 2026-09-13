@@ -36,6 +36,15 @@
     "language": "Language",
     "switchLanguage": "التبديل إلى العربية"
   },
+  "error": {
+    "title": "Error Occurred",
+    "subtitle": "Sorry, something went wrong",
+    "description": "We apologize for the inconvenience. It seems there's an issue loading this page. Please try again or return to the homepage.",
+    "tryAgain": "Try Again",
+    "backHome": "Back to Home",
+    "errorCode": "Error Code",
+    "helpText": "If the problem persists, please contact technical support"
+  },
   "account": {
     "profile": "Profile",
     "name": "Name",
@@ -158,12 +167,14 @@
     "noOrders": "No orders yet",
     "viewDetails": "View Details",
     "cancelOrder": "Cancel Order",
+    "confirmCancel": "Are you sure you want to cancel this order?",
     "orderDetails": "Order Details",
     "shippingAddress": "Shipping Address",
     "summary": "Summary",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
     "quantity": "Quantity",
+    "errorLoadingOrders": "An error occurred while loading orders. Please try again.",
     "statuses": {
       "pending": "Pending",
       "confirmed": "Confirmed",
