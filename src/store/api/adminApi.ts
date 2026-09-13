@@ -12,6 +12,7 @@ import type {
   Order,
   UpdateOrderRequest,
 } from "@/types";
+import type { User, UserStatistics, GetUsersParams } from "@/types/user";
 
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -46,6 +47,43 @@ export const adminApi = baseApi.injectEndpoints({
         method: "DELETE",
       }),
       invalidatesTags: ["Products"],
+    }),
+
+    // Low Stock Products
+    getLowStockProducts: builder.query<
+      ApiResponse<{ products: Product[]; count: number }>,
+      { threshold?: number }
+    >({
+      query: ({ threshold = 10 }) => ({
+        url: API_ENDPOINTS.PRODUCTS.ADMIN.LOW_STOCK,
+        params: { threshold },
+      }),
+      providesTags: ["Products"],
+    }),
+
+    // Out of Stock Products
+    getOutOfStockProducts: builder.query<
+      ApiResponse<{ products: Product[]; count: number }>,
+      void
+    >({
+      query: () => API_ENDPOINTS.PRODUCTS.ADMIN.OUT_OF_STOCK,
+      providesTags: ["Products"],
+    }),
+
+    // Update Inventory
+    updateInventory: builder.mutation<
+      ApiResponse<Product>,
+      { id: string; variantSku: string; quantity: number; reason?: string }
+    >({
+      query: ({ id, ...data }) => ({
+        url: API_ENDPOINTS.PRODUCTS.UPDATE_INVENTORY(id),
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Products", id },
+        "Products",
+      ],
     }),
 
     // Categories Management
@@ -83,15 +121,12 @@ export const adminApi = baseApi.injectEndpoints({
 
     // Orders Management
     getAllOrders: builder.query<
-      {
-        success: boolean;
-        data: {
-          orders: Order[];
-          total: number;
-          page: number;
-          pageCount: number;
-        };
-      },
+      ApiResponse<PaginatedResponse<Order> & {
+        orders: Order[];
+        total: number;
+        page: number;
+        pageCount: number;
+      }>,
       { page?: number; limit?: number; status?: string } | undefined
     >({
       query: (params) => ({
@@ -122,6 +157,22 @@ export const adminApi = baseApi.injectEndpoints({
       ],
     }),
 
+    // Update admin notes
+    updateAdminNotes: builder.mutation<
+      ApiResponse<Order>,
+      { id: string; adminNotes: string }
+    >({
+      query: ({ id, adminNotes }) => ({
+        url: API_ENDPOINTS.ORDERS.ADMIN.UPDATE_NOTES(id),
+        method: "PATCH",
+        body: { adminNotes },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Orders", id },
+        "Orders",
+      ],
+    }),
+
     // Statistics
     getStatistics: builder.query<
       ApiResponse<{
@@ -136,6 +187,57 @@ export const adminApi = baseApi.injectEndpoints({
       query: () => API_ENDPOINTS.ORDERS.ADMIN.STATISTICS,
       providesTags: ["Orders", "Products"],
     }),
+
+    // Users Management
+    getAllUsers: builder.query<
+      ApiResponse<PaginatedResponse<User> & {
+        users: User[];
+        total: number;
+        page: number;
+        pageCount: number;
+      }>,
+      GetUsersParams | undefined
+    >({
+      query: (params) => ({
+        url: API_ENDPOINTS.USERS.ADMIN.ALL,
+        params: params || {},
+      }),
+      providesTags: (result) =>
+        result?.data?.users
+          ? [
+            ...result.data.users.map(({ _id }) => ({ type: "Users" as const, id: _id })),
+            "Users",
+          ]
+          : ["Users"],
+    }),
+
+    getUserById: builder.query<ApiResponse<{ user: User }>, string>({
+      query: (id) => API_ENDPOINTS.USERS.ADMIN.BY_ID(id),
+      providesTags: (result, error, id) => [{ type: "Users", id }],
+    }),
+
+    getUserStatistics: builder.query<ApiResponse<UserStatistics>, string>({
+      query: (id) => API_ENDPOINTS.USERS.ADMIN.STATISTICS(id),
+      providesTags: (result, error, id) => [
+        { type: "Users", id },
+        { type: "Orders", id: `user-${id}` },
+      ],
+    }),
+
+    updateUserStatus: builder.mutation<
+      ApiResponse<{ user: User }>,
+      { id: string; isActive: boolean }
+    >({
+      query: ({ id, isActive }) => ({
+        url: API_ENDPOINTS.USERS.ADMIN.UPDATE_STATUS(id),
+        method: "PATCH",
+        body: { isActive },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Users", id },
+        "Users",
+      ],
+    }),
   }),
 });
 
@@ -143,10 +245,18 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useGetLowStockProductsQuery,
+  useGetOutOfStockProductsQuery,
+  useUpdateInventoryMutation,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
+  useUpdateAdminNotesMutation,
   useGetStatisticsQuery,
+  useGetAllUsersQuery,
+  useGetUserByIdQuery,
+  useGetUserStatisticsQuery,
+  useUpdateUserStatusMutation,
 } = adminApi;

@@ -3,34 +3,32 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { setStatusFilter, setOrderCurrentPage, openStatusModal, closeStatusModal } from "@/store";
-import { useGetAllOrdersQuery, useUpdateOrderStatusMutation } from "@/store/api/adminApi";
+import { setStatusFilter, setOrderCurrentPage } from "@/store";
+import { useGetAllOrdersQuery } from "@/store/api/adminApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Modal } from "@/components/ui/modal";
-import { Eye, CheckCircle, ShoppingCart } from "lucide-react";
+import { UpdateOrderStatusModal } from "@/components/admin/modals/UpdateOrderStatusModal";
+import { Eye, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import type { Order } from "@/types";
 
 export default function OrdersManagementPage() {
   const t = useTranslations();
   const dispatch = useAppDispatch();
-  const { statusFilter, currentPage, isStatusModalOpen, orderToUpdate } = useAppSelector(
-    (state) => state.adminOrders
-  );
+  const { statusFilter, currentPage } = useAppSelector((state) => state.adminOrders);
 
   const { data, isLoading, error } = useGetAllOrdersQuery({
     page: currentPage,
     limit: 10,
     status: statusFilter || undefined,
   });
-  const [updateOrderStatus, { isLoading: isUpdating }] = useUpdateOrderStatusMutation();
 
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
   const orders = data?.data?.orders || [];
   const total = data?.data?.total || 0;
@@ -45,23 +43,14 @@ export default function OrdersManagementPage() {
     "cancelled",
   ];
 
-  const handleUpdateConfirm = async () => {
-    if (!orderToUpdate || !selectedStatus) return;
+  const handleOpenStatusModal = (order: Order) => {
+    setSelectedOrder(order);
+    setIsStatusModalOpen(true);
+  };
 
-    try {
-      await updateOrderStatus({
-        id: orderToUpdate.id,
-        data: { status: selectedStatus as "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" }
-      }).unwrap();
-      setSuccessMessage(t("admin.orderUpdated"));
-      dispatch(closeStatusModal());
-      setSelectedStatus("");
-
-      setTimeout(() => setSuccessMessage(""), 3000);
-    } catch (error) {
-      dispatch(closeStatusModal());
-      setSelectedStatus("");
-    }
+  const handleCloseStatusModal = () => {
+    setSelectedOrder(null);
+    setIsStatusModalOpen(false);
   };
 
   return (
@@ -78,11 +67,7 @@ export default function OrdersManagementPage() {
         </div>
 
         {/* Success Message */}
-        {successMessage && (
-          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-            {successMessage}
-          </div>
-        )}
+        {/* Removed - will be handled by UpdateOrderStatusModal */}
 
         {/* Filter */}
         <Card className="p-4">
@@ -168,12 +153,7 @@ export default function OrdersManagementPage() {
                         </td>
                         <td className="py-4 px-6">
                           <button
-                            onClick={() => {
-                              dispatch(
-                                openStatusModal({ id: order._id, currentStatus: order.status })
-                              );
-                              setSelectedStatus(order.status);
-                            }}
+                            onClick={() => handleOpenStatusModal(order)}
                             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${order.status === "delivered"
                               ? "bg-green-100 text-green-800 hover:bg-green-200"
                               : order.status === "cancelled"
@@ -227,12 +207,7 @@ export default function OrdersManagementPage() {
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => {
-                          dispatch(
-                            openStatusModal({ id: order._id, currentStatus: order.status })
-                          );
-                          setSelectedStatus(order.status);
-                        }}
+                        onClick={() => handleOpenStatusModal(order)}
                         className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${order.status === "delivered"
                           ? "bg-green-100 text-green-800"
                           : order.status === "cancelled"
@@ -288,55 +263,11 @@ export default function OrdersManagementPage() {
       </div>
 
       {/* Update Status Modal */}
-      <Modal
+      <UpdateOrderStatusModal
+        order={selectedOrder}
         isOpen={isStatusModalOpen}
-        onClose={() => {
-          dispatch(closeStatusModal());
-          setSelectedStatus("");
-        }}
-        title={t("admin.updateOrderStatus")}
-        size="sm"
-      >
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Label>{t("orders.status")}</Label>
-            <Select value={selectedStatus} onValueChange={(value) => setSelectedStatus(value || "")}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {statuses.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {t(`orders.statuses.${status}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex gap-3">
-            <Button
-              onClick={handleUpdateConfirm}
-              disabled={isUpdating || selectedStatus === orderToUpdate?.currentStatus}
-              className="flex-1 bg-purple-600 hover:bg-purple-700"
-            >
-              <CheckCircle className="w-4 h-4 ml-2" />
-              {isUpdating ? t("admin.saving") : t("common.save")}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                dispatch(closeStatusModal());
-                setSelectedStatus("");
-              }}
-              disabled={isUpdating}
-              className="flex-1"
-            >
-              {t("common.cancel")}
-            </Button>
-          </div>
-        </div>
-      </Modal>
+        onClose={handleCloseStatusModal}
+      />
     </>
   );
 }

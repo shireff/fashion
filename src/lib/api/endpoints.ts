@@ -12,6 +12,11 @@ export const API_ENDPOINTS = {
     BY_ID: (id: string) => `/products/${id}`,
     BY_SLUG: (slug: string) => `/products/slug/${slug}`,
     REVIEWS: (id: string) => `/products/${id}/reviews`,
+    UPDATE_INVENTORY: (id: string) => `/products/${id}/inventory`,
+    ADMIN: {
+      LOW_STOCK: "/products/admin/low-stock",
+      OUT_OF_STOCK: "/products/admin/out-of-stock",
+    },
   },
   CATEGORIES: {
     BASE: "/categories",
@@ -25,6 +30,7 @@ export const API_ENDPOINTS = {
     ADMIN: {
       ALL: "/orders/admin/all",
       UPDATE_STATUS: (id: string) => `/orders/admin/${id}/status`,
+      UPDATE_NOTES: (id: string) => `/orders/admin/${id}/notes`,
       STATISTICS: "/orders/admin/statistics",
     },
   },
@@ -44,6 +50,14 @@ export const API_ENDPOINTS = {
   },
   UPLOAD: {
     IMAGE: "/upload/image",
+  },
+  USERS: {
+    ADMIN: {
+      ALL: "/users/admin/all",
+      BY_ID: (id: string) => `/users/admin/${id}`,
+      STATISTICS: (id: string) => `/users/admin/${id}/statistics`,
+      UPDATE_STATUS: (id: string) => `/users/admin/${id}/status`,
+    },
   },
 } as const;
 

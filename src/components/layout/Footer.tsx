@@ -69,7 +69,7 @@ export function Footer() {
               <li className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 shrink-0" />
-                  <span className="font-medium">{locale === "ar" ? "أ. كرس" : "Mr. Karas"}</span>
+                  <span className="font-medium">{locale === "ar" ? "أ. كاراس" : "Mr. Karas"}</span>
                 </div>
                 <a
                   href={siteConfig.contact.karas.whatsapp}

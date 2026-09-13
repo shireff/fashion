@@ -42,7 +42,7 @@ export const siteConfig = {
     // Business Owners
     karas: {
       name: "mrKaras",
-      nameAr: "أ. كرس",
+      nameAr: "أ. كاراس",
       phone: "+201204398754",
       phoneFormatted: "(+20) 120-439-8754",
       whatsapp: "https://wa.me/201204398754",
