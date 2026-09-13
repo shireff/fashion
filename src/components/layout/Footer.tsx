@@ -62,14 +62,38 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-gray-600">
               <li className="flex items-start gap-2">
                 <Mail className="w-4 h-4 mt-1 shrink-0" />
-                <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-primary transition-colors">
-                  {siteConfig.contact.email}
+                <a href={`mailto:${siteConfig.contact.sharif.email}`} className="hover:text-primary transition-colors">
+                  {siteConfig.contact.sharif.email}
                 </a>
               </li>
-              <li className="flex items-start gap-2">
-                <Phone className="w-4 h-4 mt-1 shrink-0" />
-                <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-primary transition-colors">
-                  {siteConfig.contact.phoneFormatted}
+              <li className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 shrink-0" />
+                  <span className="font-medium">{locale === "ar" ? "أ. كرس" : "Mr. Karas"}</span>
+                </div>
+                <a
+                  href={siteConfig.contact.karas.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors mr-6"
+                  dir="ltr"
+                >
+                  {siteConfig.contact.karas.phoneFormatted}
+                </a>
+              </li>
+              <li className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 shrink-0" />
+                  <span className="font-medium">{locale === "ar" ? "أ. أفرام" : "Mr. Avram"}</span>
+                </div>
+                <a
+                  href={siteConfig.contact.avram.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors mr-6"
+                  dir="ltr"
+                >
+                  {siteConfig.contact.avram.phoneFormatted}
                 </a>
               </li>
               <li className="flex items-start gap-2">

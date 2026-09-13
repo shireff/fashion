@@ -39,17 +39,42 @@ export const siteConfig = {
 
   // Contact Info
   contact: {
-    email: "info@fashionstore.com",
-    supportEmail: "support@fashionstore.com",
-    phone: "+20 123 456 7890",
-    phoneFormatted: "(+20) 123-456-7890",
+    // Business Owners
+    karas: {
+      name: "mrKaras",
+      nameAr: "أ. كرس",
+      phone: "+201204398754",
+      phoneFormatted: "(+20) 120-439-8754",
+      whatsapp: "https://wa.me/201204398754",
+    },
+    avram: {
+      name: "mrAvram",
+      nameAr: "أ. أفرام",
+      phone: "+201092560414",
+      phoneFormatted: "(+20) 109-256-0414",
+      whatsapp: "https://wa.me/201092560414",
+    },
+    // Technical Support
+    sharif: {
+      name: "mrSharif",
+      nameAr: "م. شريف",
+      phone: "+201274068946",
+      phoneFormatted: "(+20) 127-406-8946",
+      email: "shireffn369@gmail.com",
+      whatsapp: "https://wa.me/201274068946",
+    },
+    // General Contact
+    email: "shireffn369@gmail.com",
+    supportEmail: "shireffn369@gmail.com",
+    phone: "+201204398754", // Primary (Karas)
+    phoneFormatted: "(+20) 120-439-8754",
     address: {
-      ar: "القاهرة، مصر",
+      ar: "القاهرة، مصر، الفيوم",
       en: "Cairo, Egypt",
     },
     addressFull: {
-      ar: "١٢٣ شارع التحرير، وسط البلد، القاهرة، مصر",
-      en: "123 Tahrir Street, Downtown, Cairo, Egypt",
+      ar: "القاهرة، مصر، الفيوم",
+      en: "Cairo, Egypt",
     },
     workingHours: {
       ar: "السبت - الخميس: ١٠ص - ١٠م | الجمعة: ١٢ظ - ١٢م",
@@ -215,22 +240,12 @@ export function generateMetadata({
     },
     manifest: "/site.webmanifest",
     appleWebApp: {
-      capable: true,
-      statusBarStyle: "black-translucent",
+      capable: false, // Disable PWA for regular users
+      statusBarStyle: "default",
       title: isArabic ? siteConfig.nameAr : siteConfig.name,
-      startupImage: [
-        {
-          url: "/apple-touch-icon.png",
-          media: "(device-width: 375px) and (device-height: 812px)",
-        },
-      ],
     },
     formatDetection: {
       telephone: false,
-    },
-    other: {
-      "mobile-web-app-capable": "yes",
-      "apple-mobile-web-app-status-bar-style": "black-translucent",
     },
   };
 }
