@@ -23,6 +23,8 @@ export const siteConfig = {
   logoAr: "/logo-ar.png",
   ogImage: "/og-image.jpg",
   favicon: "/favicon.ico",
+  appleTouchIcon: "/apple-touch-icon.png",
+  favicon96: "/favicon-96x96.png",
 
   // Social Media Links
   social: {
@@ -197,14 +199,38 @@ export function generateMetadata({
       },
     },
     icons: {
-      icon: siteConfig.favicon,
-      apple: "/apple-touch-icon.png",
+      icon: [
+        { url: siteConfig.favicon, sizes: "any" },
+        { url: siteConfig.favicon96, sizes: "96x96", type: "image/png" },
+        { url: "/favicon.svg", type: "image/svg+xml" },
+      ],
+      apple: siteConfig.appleTouchIcon,
+      other: [
+        {
+          rel: "mask-icon",
+          url: "/favicon.svg",
+          color: "#9333ea",
+        },
+      ],
     },
-    manifest: "/manifest.json",
+    manifest: "/site.webmanifest",
     appleWebApp: {
       capable: true,
-      statusBarStyle: "default",
+      statusBarStyle: "black-translucent",
       title: isArabic ? siteConfig.nameAr : siteConfig.name,
+      startupImage: [
+        {
+          url: "/apple-touch-icon.png",
+          media: "(device-width: 375px) and (device-height: 812px)",
+        },
+      ],
+    },
+    formatDetection: {
+      telephone: false,
+    },
+    other: {
+      "mobile-web-app-capable": "yes",
+      "apple-mobile-web-app-status-bar-style": "black-translucent",
     },
   };
 }
