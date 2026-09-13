@@ -39,5 +39,7 @@ export interface OrdersResponse {
 
 export interface OrderResponse {
   success: boolean;
-  data: Order;
+  data: {
+    order: Order;
+  };
 }

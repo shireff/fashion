@@ -14,6 +14,7 @@ import { getErrorMessage } from "@/lib/utils/errorHandler";
 import { getLocalizedText } from "@/lib/utils/bilingual";
 import type { Address } from "@/types/address";
 import { ErrorModal } from "@/components/ui/error-modal";
+import { SuccessModal } from "@/components/ui/success-modal";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -52,6 +53,10 @@ export default function CheckoutPage() {
     isOpen: false,
     title: "",
     message: "",
+  });
+  const [successModal, setSuccessModal] = useState<{ isOpen: boolean; orderNumber: string }>({
+    isOpen: false,
+    orderNumber: "",
   });
 
   const effectiveSelectedAddress = selectedAddress || computedSelectedAddress;
@@ -115,10 +120,16 @@ export default function CheckoutPage() {
           landmark: selectedAddressObj.landmark || "",
         },
         notes,
-      }).unwrap();
+      }).unwrap().then((response) => {
+        // Clear cart
+        dispatch(clearCart());
 
-      dispatch(clearCart());
-      router.push("/orders");
+        // Show success modal with order number
+        setSuccessModal({
+          isOpen: true,
+          orderNumber: response.data.order.orderNumber || "N/A",
+        });
+      });
     } catch (err) {
       setErrorModal({
         isOpen: true,
@@ -176,8 +187,8 @@ export default function CheckoutPage() {
                         key={address._id}
                         onClick={() => setSelectedAddress(address._id)}
                         className={`w-full p-5 rounded-xl text-right transition-all duration-200 ${effectiveSelectedAddress === address._id
-                            ? "bg-gray-900 text-white shadow-lg ring-2 ring-gray-900 ring-offset-2"
-                            : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
+                          ? "bg-gray-900 text-white shadow-lg ring-2 ring-gray-900 ring-offset-2"
+                          : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
                           }`}
                       >
                         <div className="flex items-start justify-between">
@@ -306,6 +317,12 @@ export default function CheckoutPage() {
         onClose={() => setErrorModal({ isOpen: false, title: "", message: "" })}
         title={errorModal.title}
         message={errorModal.message}
+      />
+
+      <SuccessModal
+        isOpen={successModal.isOpen}
+        onClose={() => setSuccessModal({ isOpen: false, orderNumber: "" })}
+        orderNumber={successModal.orderNumber}
       />
     </div>
   );
