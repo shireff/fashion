@@ -2,12 +2,22 @@ import type { Order } from "./order";
 
 export interface CreateOrderRequest {
   items: Array<{
-    product: string;
-    variant?: string;
+    productId: string;
+    variantSku: string;
     quantity: number;
-    price: number;
   }>;
-  shippingAddress: string;
+  shippingAddress: {
+    recipientName: string;
+    recipientPhone: string;
+    governorate: string;
+    city: string;
+    area?: string;
+    streetAddress: string;
+    buildingNumber?: string;
+    floorNumber?: string;
+    apartmentNumber?: string;
+    landmark?: string;
+  };
   notes?: string;
 }
 

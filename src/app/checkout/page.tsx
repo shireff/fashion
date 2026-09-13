@@ -13,6 +13,7 @@ import { AddressCardSkeleton } from "@/components/skeletons";
 import { getErrorMessage } from "@/lib/utils/errorHandler";
 import { getLocalizedText } from "@/lib/utils/bilingual";
 import type { Address } from "@/types/address";
+import { ErrorModal } from "@/components/ui/error-modal";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -49,6 +50,11 @@ export default function CheckoutPage() {
 
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [notes, setNotes] = useState("");
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; title: string; message: string }>({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
 
   // Sync selectedAddress with computedSelectedAddress only when addresses change
   const effectiveSelectedAddress = selectedAddress || computedSelectedAddress;
@@ -71,28 +77,58 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (!effectiveSelectedAddress) {
-      alert(t("selectAddress"));
+      setErrorModal({
+        isOpen: true,
+        title: tCommon("error"),
+        message: t("selectAddress"),
+      });
       return;
     }
 
     try {
+      // Find the selected address object
+      const selectedAddressObj = addresses.find((addr) => addr._id === effectiveSelectedAddress);
+
+      if (!selectedAddressObj) {
+        setErrorModal({
+          isOpen: true,
+          title: tCommon("error"),
+          message: t("selectAddress"),
+        });
+        return;
+      }
+
       const orderItems = items.map((item) => ({
-        product: item.product._id,
-        variant: item.variantId,
+        productId: item.product._id,
+        variantSku: item.variantId || item.product.sku || "DEFAULT-SKU",
         quantity: item.quantity,
-        price: item.product.price,
       }));
 
       await createOrder({
         items: orderItems,
-        shippingAddress: effectiveSelectedAddress,
+        shippingAddress: {
+          recipientName: selectedAddressObj.recipientName,
+          recipientPhone: selectedAddressObj.recipientPhone,
+          governorate: selectedAddressObj.governorate,
+          city: selectedAddressObj.city,
+          area: selectedAddressObj.area || "",
+          streetAddress: selectedAddressObj.streetAddress,
+          buildingNumber: selectedAddressObj.buildingNumber || "",
+          floorNumber: selectedAddressObj.floorNumber || "",
+          apartmentNumber: selectedAddressObj.apartmentNumber || "",
+          landmark: selectedAddressObj.landmark || "",
+        },
         notes,
       }).unwrap();
 
       dispatch(clearCart());
       router.push("/orders");
     } catch (err) {
-      alert(getErrorMessage(err as never, tCommon("error")));
+      setErrorModal({
+        isOpen: true,
+        title: tCommon("error"),
+        message: getErrorMessage(err as never, tCommon("error")),
+      });
     }
   };
 
@@ -212,6 +248,14 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ isOpen: false, title: "", message: "" })}
+        title={errorModal.title}
+        message={errorModal.message}
+      />
     </div>
   );
 }
