@@ -104,7 +104,11 @@
     "details": "Details",
     "material": "Material",
     "careInstructions": "Care Instructions",
-    "relatedProducts": "Related Products"
+    "relatedProducts": "Related Products",
+    "error": "Error Occurred",
+    "errorLoadingProducts": "An error occurred while loading products. Please try again.",
+    "tryAgain": "Try Again",
+    "backToHome": "Back to Home"
   },
   "cart": {
     "title": "Shopping Cart",
@@ -155,8 +159,111 @@
     "work": "Work",
     "other": "Other",
     "noAddresses": "No saved addresses",
+    "noAddressesDescription": "You haven't added any shipping addresses yet. Add your first address to make checkout easier.",
     "addNew": "Add New Address",
-    "confirmDelete": "Are you sure you want to delete this address?"
+    "confirmDelete": "Are you sure you want to delete this address?",
+    "errorLoadingAddresses": "An error occurred while loading addresses. Please try again."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": {
+      "title": "Introduction",
+      "content": "At Fashion, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect your personal information when you use our website."
+    },
+    "dataCollection": {
+      "title": "Information We Collect",
+      "content": "We collect the following information:",
+      "items": {
+        "personal": "Personal information: Name, email, phone number",
+        "contact": "Contact and communication information",
+        "shipping": "Shipping and billing addresses",
+        "payment": "Payment information (processed securely)"
+      }
+    },
+    "dataUse": {
+      "title": "How We Use Your Information",
+      "items": {
+        "processing": "Process and fulfill your orders",
+        "communication": "Communicate with you about orders and special offers",
+        "improvement": "Improve our services and shopping experience",
+        "security": "Prevent fraud and ensure website security"
+      }
+    },
+    "dataProtection": {
+      "title": "Data Protection",
+      "content": "We use advanced security measures to protect your personal information from unauthorized access, disclosure, alteration, or destruction."
+    },
+    "rights": {
+      "title": "Your Rights",
+      "items": {
+        "access": "Access your personal information",
+        "correction": "Correct any inaccurate information",
+        "deletion": "Request deletion of your information",
+        "objection": "Object to processing of your information"
+      }
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "We use cookies to enhance your experience on our website and remember your preferences."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have any questions about this Privacy Policy, please contact us via email."
+    },
+    "lastUpdated": "Last Updated"
+  },
+  "terms": {
+    "title": "Terms & Conditions",
+    "intro": {
+      "title": "Introduction",
+      "content": "Welcome to Fashion. By using our website, you agree to comply with these Terms and Conditions. Please read them carefully."
+    },
+    "account": {
+      "title": "User Account",
+      "content": "You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account."
+    },
+    "orders": {
+      "title": "Orders and Purchases",
+      "items": {
+        "placement": "All orders are subject to acceptance and availability",
+        "confirmation": "You will receive an email confirmation upon order acceptance",
+        "cancellation": "Orders can be cancelled before shipment",
+        "modification": "Orders cannot be modified after confirmation"
+      }
+    },
+    "pricing": {
+      "title": "Pricing and Payment",
+      "content": "All prices are in Egyptian Pounds and include taxes. We reserve the right to change prices at any time without prior notice."
+    },
+    "shipping": {
+      "title": "Shipping and Delivery",
+      "content": "We ship to all governorates of Egypt. Delivery times vary by location and may take 2-7 business days."
+    },
+    "returns": {
+      "title": "Returns and Exchanges",
+      "content": "You can return products within 14 days of receipt provided they are in original condition with all tags."
+    },
+    "payment": {
+      "title": "Payment Methods",
+      "content": "We accept cash on delivery and electronic payment via credit cards and e-wallets."
+    },
+    "intellectual": {
+      "title": "Intellectual Property",
+      "content": "All content on this website, including text, images, and logos, is proprietary to Fashion and protected by copyright laws."
+    },
+    "liability": {
+      "title": "Limitation of Liability",
+      "content": "Fashion is not liable for any direct, indirect, or incidental damages arising from the use or inability to use the website."
+    },
+    "changes": {
+      "title": "Changes to Terms",
+      "content": "We reserve the right to modify these Terms and Conditions at any time. Changes will become effective upon posting on the website."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have any questions about these Terms and Conditions, please contact us."
+    },
+    "lastUpdated": "Last Updated"
   },
   "orders": {
     "title": "My Orders",
@@ -165,6 +272,7 @@
     "status": "Status",
     "items": "Items",
     "noOrders": "No orders yet",
+    "noOrdersDescription": "You haven't placed any orders yet. Browse our products and order now!",
     "viewDetails": "View Details",
     "cancelOrder": "Cancel Order",
     "confirmCancel": "Are you sure you want to cancel this order?",
@@ -251,6 +359,18 @@
     "loggingIn": "Logging in...",
     "unauthorized": "Unauthorized",
     "unauthorizedMessage": "You don't have permission to access this page",
+    "emptyProducts": "No Products",
+    "emptyProductsDescription": "No products have been added yet. Start by adding a new product.",
+    "emptyCategories": "No Categories",
+    "emptyCategoriesDescription": "No categories have been added yet. Start by adding a new category.",
+    "emptyOrders": "No Orders",
+    "emptyOrdersDescription": "There are no orders at the moment.",
+    "errorProducts": "Error Loading Products",
+    "errorProductsDescription": "An error occurred while loading products. Please try again.",
+    "errorCategories": "Error Loading Categories",
+    "errorCategoriesDescription": "An error occurred while loading categories. Please try again.",
+    "errorOrders": "Error Loading Orders",
+    "errorOrdersDescription": "An error occurred while loading orders. Please try again.",
     "overview": "Overview",
     "statistics": "Statistics",
     "totalRevenue": "Total Revenue",

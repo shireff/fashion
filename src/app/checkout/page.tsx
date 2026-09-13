@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/store";
@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AddressCardSkeleton } from "@/components/skeletons";
 import { getErrorMessage } from "@/lib/utils/errorHandler";
 import { getLocalizedText } from "@/lib/utils/bilingual";
+import type { Address } from "@/types/address";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -23,15 +24,34 @@ export default function CheckoutPage() {
   const { items, totalAmount } = useAppSelector((state) => state.cart);
   const { user } = useAppSelector((state) => state.auth);
 
-  const [selectedAddress, setSelectedAddress] = useState<string>("");
-  const [notes, setNotes] = useState("");
-
   const { data: addressesData, isLoading: addressesLoading } = useGetAddressesQuery(undefined, {
     skip: !user,
   });
   const [createOrder, { isLoading }] = useCreateOrderMutation();
 
-  const addresses = addressesData?.data || [];
+  // Handle both address response formats with useMemo to prevent re-creation on every render
+  const addresses: Address[] = useMemo(() => {
+    if (Array.isArray(addressesData?.data)) {
+      return addressesData.data;
+    }
+    if (addressesData?.data && typeof addressesData.data === 'object' && 'addresses' in addressesData.data) {
+      return (addressesData.data as { addresses: Address[] }).addresses;
+    }
+    return [];
+  }, [addressesData]);
+
+  // Compute selected address - prefer default address, fallback to first address
+  const computedSelectedAddress = useMemo(() => {
+    if (addresses.length === 0) return "";
+    const defaultAddr = addresses.find((addr) => addr.isDefault);
+    return defaultAddr ? defaultAddr._id : addresses[0]._id;
+  }, [addresses]);
+
+  const [selectedAddress, setSelectedAddress] = useState<string>("");
+  const [notes, setNotes] = useState("");
+
+  // Sync selectedAddress with computedSelectedAddress only when addresses change
+  const effectiveSelectedAddress = selectedAddress || computedSelectedAddress;
 
   useEffect(() => {
     if (!user) {
@@ -45,23 +65,12 @@ export default function CheckoutPage() {
     }
   }, [user, items, router]);
 
-  useEffect(() => {
-    if (addresses.length > 0 && !selectedAddress) {
-      const defaultAddr = addresses.find((addr) => addr.isDefault);
-      if (defaultAddr) {
-        setSelectedAddress(defaultAddr._id);
-      } else {
-        setSelectedAddress(addresses[0]._id);
-      }
-    }
-  }, [addresses, selectedAddress]);
-
   if (!user || items.length === 0) {
     return null;
   }
 
   const handlePlaceOrder = async () => {
-    if (!selectedAddress) {
+    if (!effectiveSelectedAddress) {
       alert(t("selectAddress"));
       return;
     }
@@ -76,7 +85,7 @@ export default function CheckoutPage() {
 
       await createOrder({
         items: orderItems,
-        shippingAddress: selectedAddress,
+        shippingAddress: effectiveSelectedAddress,
         notes,
       }).unwrap();
 
@@ -112,11 +121,11 @@ export default function CheckoutPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {addresses.map((address) => (
+                {addresses.map((address: Address) => (
                   <button
                     key={address._id}
                     onClick={() => setSelectedAddress(address._id)}
-                    className={`w-full p-6 border-2 text-left rounded transition-colors ${selectedAddress === address._id
+                    className={`w-full p-6 border-2 text-left rounded transition-colors ${effectiveSelectedAddress === address._id
                       ? "border-black bg-gray-50"
                       : "border-gray-200 hover:border-gray-300"
                       }`}
@@ -194,7 +203,7 @@ export default function CheckoutPage() {
 
             <Button
               onClick={handlePlaceOrder}
-              disabled={isLoading || !selectedAddress}
+              disabled={isLoading || !effectiveSelectedAddress}
               size="lg"
               className="w-full"
             >

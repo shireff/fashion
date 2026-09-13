@@ -10,8 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
-import { Eye, CheckCircle } from "lucide-react";
+import { Eye, CheckCircle, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function OrdersManagementPage() {
   const t = useTranslations();
@@ -20,7 +22,7 @@ export default function OrdersManagementPage() {
     (state) => state.adminOrders
   );
 
-  const { data, isLoading } = useGetAllOrdersQuery({
+  const { data, isLoading, error } = useGetAllOrdersQuery({
     page: currentPage,
     limit: 10,
     status: statusFilter || undefined,
@@ -109,8 +111,20 @@ export default function OrdersManagementPage() {
         <Card className="overflow-hidden">
           {isLoading ? (
             <div className="p-12 text-center text-gray-500">{t("common.loading")}</div>
+          ) : error ? (
+            <ErrorState
+              title={t("admin.errorOrders")}
+              message={t("admin.errorOrdersDescription")}
+              onRetry={() => window.location.reload()}
+              retryLabel={t("common.tryAgain")}
+              homeLabel={t("common.backHome")}
+            />
           ) : orders.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">{t("orders.noOrders")}</div>
+            <EmptyState
+              icon={ShoppingCart}
+              title={t("admin.emptyOrders")}
+              description={t("admin.emptyOrdersDescription")}
+            />
           ) : (
             <>
               {/* Desktop Table */}

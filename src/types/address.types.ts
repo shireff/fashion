@@ -33,7 +33,9 @@ export interface UpdateAddressRequest {
 
 export interface AddressesResponse {
   success: boolean;
-  data: Address[];
+  data: {
+    addresses: Address[];
+  } | Address[];
 }
 
 export interface AddressResponse {

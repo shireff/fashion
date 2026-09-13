@@ -4,12 +4,16 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { MapPin, Plus } from "lucide-react";
 import { useAppSelector } from "@/store";
 import { useGetAddressesQuery, useDeleteAddressMutation, useSetDefaultAddressMutation } from "@/store/api/addressesApi";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { AddressCardSkeleton } from "@/components/skeletons";
 import { getErrorMessage } from "@/lib/utils/errorHandler";
+import type { Address } from "@/types/address";
 
 export default function AddressesPage() {
   const t = useTranslations("address");
@@ -47,6 +51,7 @@ export default function AddressesPage() {
     }
   };
 
+  // Redirect if not logged in
   if (!user) {
     return null;
   }
@@ -57,7 +62,10 @@ export default function AddressesPage() {
         <div className="flex justify-between items-center mb-12">
           <h1 className="text-5xl font-bold">{t("title")}</h1>
           <Button asChild>
-            <Link href="/account/addresses/new">{t("addNew")}</Link>
+            <Link href="/account/addresses/new">
+              <Plus className="w-5 h-5 mr-2" />
+              {t("addNew")}
+            </Link>
           </Button>
         </div>
         <div className="grid md:grid-cols-2 gap-6">
@@ -72,33 +80,50 @@ export default function AddressesPage() {
   if (error) {
     return (
       <div className="container mx-auto px-6 py-20">
-        <div className="text-center text-red-600">{tCommon("error")}</div>
+        <ErrorState
+          title={tCommon("error")}
+          message={getErrorMessage(error as never, t("errorLoadingAddresses"))}
+          onRetry={() => window.location.reload()}
+          retryLabel={tCommon("tryAgain")}
+          homeLabel={tCommon("backHome")}
+        />
       </div>
     );
   }
 
-  const addresses = data?.data || [];
+  const addresses: Address[] = Array.isArray(data?.data)
+    ? data.data
+    : (data?.data && typeof data.data === 'object' && 'addresses' in data.data)
+      ? (data.data as { addresses: Address[] }).addresses
+      : [];
 
   return (
     <div className="container mx-auto px-6 py-20">
       <div className="flex justify-between items-center mb-12">
         <h1 className="text-5xl font-bold">{t("title")}</h1>
         <Button asChild>
-          <Link href="/account/addresses/new">{t("addNew")}</Link>
+          <Link href="/account/addresses/new">
+            <Plus className="w-5 h-5 mr-2" />
+            {t("addNew")}
+          </Link>
         </Button>
       </div>
 
       {addresses.length === 0 ? (
-        <div className="text-center space-y-6">
-          <p className="text-xl text-gray-600">{t("noAddresses")}</p>
-          <Button asChild>
-            <Link href="/account/addresses/new">{t("addNew")}</Link>
-          </Button>
-        </div>
+        <EmptyState
+          icon={MapPin}
+          title={t("noAddresses")}
+          description={t("noAddressesDescription")}
+          actionLabel={t("addNew")}
+          actionHref="/account/addresses/new"
+        />
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
-          {addresses.map((address) => (
-            <div key={address._id} className="border rounded-lg p-6 space-y-4">
+          {addresses.map((address: Address) => (
+            <div
+              key={address._id}
+              className="border rounded-lg p-6 space-y-4 hover:border-gray-300 hover:shadow-md transition-all"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-bold text-lg">{address.recipientName}</p>
@@ -110,13 +135,19 @@ export default function AddressesPage() {
 
               <div className="text-gray-600 space-y-1">
                 <p>{address.streetAddress}</p>
-                {address.buildingNumber && <p>{t("building")}: {address.buildingNumber}</p>}
-                {address.floorNumber && <p>{t("floor")}: {address.floorNumber}</p>}
-                {address.apartmentNumber && <p>{t("apartment")}: {address.apartmentNumber}</p>}
-                <p>
+                {address.buildingNumber && (
+                  <p className="text-sm">{t("building")}: {address.buildingNumber}</p>
+                )}
+                {address.floorNumber && (
+                  <p className="text-sm">{t("floor")}: {address.floorNumber}</p>
+                )}
+                {address.apartmentNumber && (
+                  <p className="text-sm">{t("apartment")}: {address.apartmentNumber}</p>
+                )}
+                <p className="font-medium">
                   {address.area}, {address.city}, {address.governorate}
                 </p>
-                <p>{address.recipientPhone}</p>
+                <p className="font-medium text-gray-900">{address.recipientPhone}</p>
               </div>
 
               <div className="flex gap-3 pt-4 border-t">

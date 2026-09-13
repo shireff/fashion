@@ -23,7 +23,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
-import { Plus, Edit, Trash2, Save } from "lucide-react";
+import { Plus, Edit, Trash2, Save, FolderOpen } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function CategoriesManagementPage() {
   const t = useTranslations();
@@ -33,7 +35,7 @@ export default function CategoriesManagementPage() {
     (state) => state.adminCategories
   );
 
-  const { data, isLoading } = useGetCategoriesQuery({});
+  const { data, isLoading, error } = useGetCategoriesQuery({});
   const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation();
   const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
   const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
@@ -196,8 +198,22 @@ export default function CategoriesManagementPage() {
         <Card className="overflow-hidden">
           {isLoading ? (
             <div className="p-12 text-center text-gray-500">{t("common.loading")}</div>
+          ) : error ? (
+            <ErrorState
+              title={t("admin.errorCategories")}
+              message={t("admin.errorCategoriesDescription")}
+              onRetry={() => window.location.reload()}
+              retryLabel={t("common.tryAgain")}
+              homeLabel={t("common.backHome")}
+            />
           ) : categories.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">{t("admin.noCategories")}</div>
+            <EmptyState
+              icon={FolderOpen}
+              title={t("admin.emptyCategories")}
+              description={t("admin.emptyCategoriesDescription")}
+              actionLabel={t("admin.addCategory")}
+              onAction={() => handleOpenForm()}
+            />
           ) : (
             <>
               {/* Desktop Table */}

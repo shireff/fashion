@@ -19,6 +19,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { getLocalizedText, getProductStock, getProductSKU } from "@/lib/utils/bilingual";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { PackageOpen } from "lucide-react";
 
 export default function ProductsManagementPage() {
   const t = useTranslations();
@@ -28,7 +31,7 @@ export default function ProductsManagementPage() {
     (state) => state.adminProducts
   );
 
-  const { data, isLoading } = useGetProductsQuery({
+  const { data, isLoading, error } = useGetProductsQuery({
     search: searchQuery,
     page: currentPage,
     limit: 10,
@@ -108,8 +111,22 @@ export default function ProductsManagementPage() {
         <Card className="overflow-hidden">
           {isLoading ? (
             <div className="p-12 text-center text-gray-500">{t("common.loading")}</div>
+          ) : error ? (
+            <ErrorState
+              title={t("admin.errorProducts")}
+              message={t("admin.errorProductsDescription")}
+              onRetry={() => window.location.reload()}
+              retryLabel={t("common.tryAgain")}
+              homeLabel={t("common.backHome")}
+            />
           ) : products.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">{t("common.noProducts")}</div>
+            <EmptyState
+              icon={PackageOpen}
+              title={t("admin.emptyProducts")}
+              description={t("admin.emptyProductsDescription")}
+              actionLabel={t("admin.addProduct")}
+              actionHref="/admin/dashboard/products/new"
+            />
           ) : (
             <>
               {/* Desktop Table */}
