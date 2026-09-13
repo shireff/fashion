@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { OrderCardSkeleton } from "@/components/skeletons";
 import { getLocalizedText } from "@/lib/utils/bilingual";
+import type { OrderItem } from "@/types/order";
+import type { Product } from "@/types/product";
 
 export default function OrderDetailPage() {
   const t = useTranslations("orders");
@@ -24,7 +26,7 @@ export default function OrderDetailPage() {
   });
   const [cancelOrder] = useCancelOrderMutation();
 
-  const order = data?.data;
+  const order = data?.data?.order;
 
   useEffect(() => {
     if (!user) {
@@ -100,8 +102,8 @@ export default function OrderDetailPage() {
         {/* Order Items */}
         <div className="lg:col-span-2 space-y-6">
           <h2 className="text-2xl font-bold">{t("items")}</h2>
-          {order.items.map((item, index) => {
-            const product = typeof item.product === "object" ? item.product : null;
+          {order.items.map((item: OrderItem, index: number) => {
+            const product = typeof item.product === "object" ? item.product as Product : null;
             if (!product) return null;
 
             return (
