@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { clearCart } from "@/store/slices/cartSlice";
@@ -11,11 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AddressCardSkeleton } from "@/components/skeletons";
 import { getErrorMessage } from "@/lib/utils/errorHandler";
+import { getLocalizedText } from "@/lib/utils/bilingual";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
   const tCart = useTranslations("cart");
   const tCommon = useTranslations("common");
+  const locale = useLocale() as "ar" | "en";
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { items, totalAmount } = useAppSelector((state) => state.cart);
@@ -161,7 +163,7 @@ export default function CheckoutPage() {
               {items.map((item) => (
                 <div key={`${item.product._id}-${item.variantId || "default"}`} className="flex justify-between text-sm">
                   <span>
-                    {item.product.name} x{item.quantity}
+                    {getLocalizedText(item.product.name, locale)} x{item.quantity}
                   </span>
                   <span className="font-medium">
                     {item.product.price * item.quantity} {tCommon("currency")}

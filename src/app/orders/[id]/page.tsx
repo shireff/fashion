@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAppSelector } from "@/store";
@@ -9,10 +9,12 @@ import { useGetOrderByIdQuery, useCancelOrderMutation } from "@/store/api/orders
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { OrderCardSkeleton } from "@/components/skeletons";
+import { getLocalizedText } from "@/lib/utils/bilingual";
 
 export default function OrderDetailPage() {
   const t = useTranslations("orders");
   const tCommon = useTranslations("common");
+  const locale = useLocale() as "ar" | "en";
   const params = useParams();
   const router = useRouter();
   const { user } = useAppSelector((state) => state.auth);
@@ -107,7 +109,7 @@ export default function OrderDetailPage() {
                 <div className="w-24 h-24 bg-gray-100 flex-shrink-0">
                   <Image
                     src={product.images[0] || "/placeholder.jpg"}
-                    alt={product.name}
+                    alt={getLocalizedText(product.name, locale)}
                     width={96}
                     height={96}
                     className="w-full h-full object-cover"
@@ -115,7 +117,7 @@ export default function OrderDetailPage() {
                 </div>
 
                 <div className="flex-1">
-                  <h3 className="font-bold">{product.name}</h3>
+                  <h3 className="font-bold">{getLocalizedText(product.name, locale)}</h3>
                   <p className="text-sm text-gray-600">
                     {t("quantity")}: {item.quantity}
                   </p>

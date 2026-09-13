@@ -1,16 +1,18 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { removeItem, updateQuantity } from "@/store/slices/cartSlice";
 import { Button } from "@/components/ui/button";
+import { getLocalizedText } from "@/lib/utils/bilingual";
 
 export default function CartPage() {
   const t = useTranslations("cart");
   const tCommon = useTranslations("common");
+  const locale = useLocale() as "ar" | "en";
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { items, totalAmount } = useAppSelector((state) => state.cart);
@@ -50,7 +52,7 @@ export default function CartPage() {
               <div className="w-32 h-32 bg-gray-100 flex-shrink-0">
                 <Image
                   src={item.product.images[0] || "/placeholder.jpg"}
-                  alt={item.product.name}
+                  alt={getLocalizedText(item.product.name, locale)}
                   width={128}
                   height={128}
                   className="w-full h-full object-cover"
@@ -60,7 +62,9 @@ export default function CartPage() {
               <div className="flex-1 space-y-4">
                 <div>
                   <Link href={`/products/${item.product._id}`}>
-                    <h3 className="text-lg font-bold hover:underline">{item.product.name}</h3>
+                    <h3 className="text-lg font-bold hover:underline">
+                      {getLocalizedText(item.product.name, locale)}
+                    </h3>
                   </Link>
                   {item.variant && (
                     <p className="text-gray-600">

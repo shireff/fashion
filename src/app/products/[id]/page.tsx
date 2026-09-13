@@ -9,7 +9,15 @@ import { useAppDispatch } from "@/store";
 import { addItem } from "@/store/slices/cartSlice";
 import { Button } from "@/components/ui/button";
 import { ProductDetailSkeleton } from "@/components/skeletons";
+import { getLocalizedText, getProductStock } from "@/lib/utils/bilingual";
 import type { Product } from "@/types/product";
+
+interface ProductByIdResponse {
+  success: boolean;
+  data: {
+    product: Product;
+  };
+}
 
 export default function ProductDetailPage() {
   const locale = useLocale() as "ar" | "en";
@@ -23,7 +31,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
 
   const { data, isLoading, error } = useGetProductByIdQuery(params.id as string);
-  const product = data?.data?.product;
+  const product = (data as ProductByIdResponse | undefined)?.data?.product;
 
   useEffect(() => {
     if (product?.variants && product.variants.length > 0 && !selectedVariant) {
@@ -55,16 +63,12 @@ export default function ProductDetailPage() {
   };
 
   // Get localized name and description
-  const name = typeof product.name === "string"
-    ? product.name
-    : (product.name as any)?.[locale] || (product.name as any)?.ar || "";
-  const description = typeof product.description === "string"
-    ? product.description
-    : (product.description as any)?.[locale] || (product.description as any)?.ar || "";
+  const name = getLocalizedText(product?.name, locale);
+  const description = getLocalizedText(product?.description, locale);
 
-  const hasStock = product.stock > 0;
-  const selectedVariantData = product.variants?.find((v) => v.sku === selectedVariant);
-  const images = product.images || [];
+  const hasStock = getProductStock(product || {}) > 0;
+  const selectedVariantData = product?.variants?.find((v) => v.sku === selectedVariant);
+  const images = product?.images || [];
 
   return (
     <div className="container mx-auto px-6 py-20">

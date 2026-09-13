@@ -24,7 +24,9 @@ export interface ProductsResponse {
 
 export interface ProductResponse {
   success: boolean;
-  data: Product;
+  data: {
+    product: Product;
+  };
 }
 
 export interface CreateReviewRequest {

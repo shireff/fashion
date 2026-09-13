@@ -18,6 +18,7 @@ import { Plus, Search, Edit, Trash2, Eye, Package } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { getLocalizedText, getProductStock, getProductSKU } from "@/lib/utils/bilingual";
 
 export default function ProductsManagementPage() {
   const t = useTranslations();
@@ -40,11 +41,9 @@ export default function ProductsManagementPage() {
   const total = data?.data?.total || 0;
   const pageCount = data?.data?.pageCount || 1;
 
-  // Helper function to get localized name
-  const getProductName = (product: any) => {
-    return typeof product.name === "string"
-      ? product.name
-      : product.name?.[locale] || product.name?.ar || "";
+  // Helper function to get localized product name
+  const getProductName = (product: typeof products[0]) => {
+    return getLocalizedText(product.name, locale);
   };
 
   const handleDeleteConfirm = async () => {
@@ -158,7 +157,7 @@ export default function ProductsManagementPage() {
                             <div>
                               <p className="font-semibold text-gray-900">{getProductName(product)}</p>
                               <p className="text-sm text-gray-500">
-                                {t("admin.productSku")}: {product.sku || "N/A"}
+                                {t("admin.productSku")}: {getProductSKU(product) || "N/A"}
                               </p>
                             </div>
                           </div>
@@ -168,14 +167,14 @@ export default function ProductsManagementPage() {
                         </td>
                         <td className="py-4 px-6">
                           <span
-                            className={`font-semibold ${product.stock < 5
+                            className={`font-semibold ${getProductStock(product) < 5
                               ? "text-red-600"
-                              : product.stock < 10
+                              : getProductStock(product) < 10
                                 ? "text-orange-600"
                                 : "text-green-600"
                               }`}
                           >
-                            {product.stock}
+                            {getProductStock(product)}
                           </span>
                         </td>
                         <td className="py-4 px-6">
@@ -243,21 +242,21 @@ export default function ProductsManagementPage() {
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{getProductName(product)}</h3>
                         <p className="text-sm text-gray-500 mt-1">
-                          {t("admin.productSku")}: {product.sku || "N/A"}
+                          {t("admin.productSku")}: {getProductSKU(product) || "N/A"}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <span className="font-semibold text-purple-600">
                             {product.price} {t("common.currency")}
                           </span>
                           <span
-                            className={`text-sm font-semibold ${product.stock < 5
+                            className={`text-sm font-semibold ${getProductStock(product) < 5
                               ? "text-red-600"
-                              : product.stock < 10
+                              : getProductStock(product) < 10
                                 ? "text-orange-600"
                                 : "text-green-600"
                               }`}
                           >
-                            • {product.stock} {t("admin.productStock")}
+                            • {getProductStock(product)} {t("admin.productStock")}
                           </span>
                         </div>
                       </div>

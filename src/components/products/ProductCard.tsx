@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/types/product";
+import { getLocalizedText, getProductStock } from "@/lib/utils/bilingual";
 
 interface ProductCardProps {
   product: Product;
@@ -17,16 +18,12 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const t = useTranslations("product");
   const tCommon = useTranslations("common");
 
-  const hasStock = product.stock > 0;
+  const hasStock = getProductStock(product) > 0;
   const mainImage = product.images[0] || "/placeholder.jpg";
 
   // Get localized name and description
-  const name = typeof product.name === "string"
-    ? product.name
-    : (product.name as any)?.[locale] || (product.name as any)?.ar || "";
-  const description = typeof product.description === "string"
-    ? product.description
-    : (product.description as any)?.[locale] || (product.description as any)?.ar || "";
+  const name = getLocalizedText(product.name, locale);
+  const description = getLocalizedText(product.description, locale);
 
   return (
     <div className="group relative bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow">

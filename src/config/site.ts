@@ -155,7 +155,7 @@ export function generateMetadata({
   return {
     title: fullTitle,
     description: pageDescription,
-    keywords: pageKeywords,
+    keywords: pageKeywords as string[],
     authors: [{ name: siteConfig.business.companyName }],
     creator: siteConfig.business.companyName,
     publisher: siteConfig.business.companyName,

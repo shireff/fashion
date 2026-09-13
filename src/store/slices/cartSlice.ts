@@ -1,17 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Product } from "@/types/product";
+import type { Product, ProductVariant } from "@/types/product";
 
-interface CartItem {
+export interface CartItem {
   product: Product;
   quantity: number;
   variantId?: string;
-  variant?: {
-    _id: string;
-    size?: string;
-    color?: string;
-    stock: number;
-    sku: string;
-  };
+  variant?: ProductVariant;
 }
 
 interface CartState {
@@ -54,7 +48,7 @@ const cartSlice = createSlice({
         existingItem.quantity += quantity;
       } else {
         const variant = variantId
-          ? product.variants?.find(v => v._id === variantId)
+          ? product.variants?.find(v => v._id === variantId || v.sku === variantId)
           : undefined;
 
         state.items.push({

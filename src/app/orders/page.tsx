@@ -52,7 +52,7 @@ export default function OrdersPage() {
     );
   }
 
-  const orders = data?.data || [];
+  const orders = data?.data?.orders || [];
 
   const handleCancelOrder = async (orderId: string) => {
     if (!confirm(t("confirmCancel"))) return;

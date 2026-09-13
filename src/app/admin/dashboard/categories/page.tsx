@@ -41,9 +41,14 @@ export default function CategoriesManagementPage() {
   const categories = data?.data?.categories || [];
 
   // Helper function to get localized text
-  const getLocalizedText = (text: any): string => {
+  const getLocalizedText = (text: unknown): string => {
     if (!text) return "";
-    return typeof text === "string" ? text : text?.[locale] || text?.ar || "";
+    if (typeof text === "string") return text;
+    if (typeof text === "object" && text !== null) {
+      const obj = text as Record<string, string>;
+      return obj[locale] || obj.ar || obj.en || "";
+    }
+    return "";
   };
 
   const [formData, setFormData] = useState({

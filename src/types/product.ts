@@ -7,6 +7,7 @@ export interface ProductVariant {
   colorNameAr?: string;
   colorNameEn?: string;
   quantity: number;
+  stock?: number; 
   sku: string;
 }
 
@@ -18,6 +19,7 @@ export interface Product {
   price: number;
   compareAtPrice?: number;
   categoryId: string | Category;
+  category?: string | Category; // Alias for categoryId
   images: string[];
   variants?: ProductVariant[];
   material?: BilingualText | string;
@@ -27,6 +29,8 @@ export interface Product {
   soldCount?: number;
   viewCount?: number;
   displayOrder?: number;
+  stock?: number; // Total stock from variants
+  sku?: string; // Primary SKU
   createdAt: string;
   updatedAt: string;
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useCreateProductMutation } from "@/store/api/adminApi";
 import { useGetCategoriesQuery } from "@/store/api/categoriesApi";
 import { Card } from "@/components/ui/card";
@@ -15,15 +15,17 @@ import { Modal } from "@/components/ui/modal";
 import { ArrowRight, Save, CheckCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { getErrorMessage } from "@/lib/utils/errorHandler";
+import { getLocalizedText } from "@/lib/utils/bilingual";
 
 export default function NewProductPage() {
   const t = useTranslations();
+  const locale = useLocale() as "ar" | "en";
   const router = useRouter();
 
   const { data: categoriesData } = useGetCategoriesQuery({});
   const [createProduct, { isLoading }] = useCreateProductMutation();
 
-  const categories = categoriesData?.data || [];
+  const categories = categoriesData?.data?.categories || [];
 
   const [formData, setFormData] = useState({
     name: "",
@@ -212,7 +214,7 @@ export default function NewProductPage() {
                   <SelectContent>
                     {categories.map((category) => (
                       <SelectItem key={category._id} value={category._id}>
-                        {category.name}
+                        {getLocalizedText(category.name, locale)}
                       </SelectItem>
                     ))}
                   </SelectContent>
