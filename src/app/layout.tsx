@@ -39,6 +39,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#9333ea" />
+        {/* Site manifest - non-installable PWA for regular users */}
+        <link rel="manifest" href="/site-manifest.json" />
       </head>
       <body className="min-h-full flex flex-col">
         <ReduxProvider>
