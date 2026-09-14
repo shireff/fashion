@@ -8,6 +8,7 @@ import { ReduxProvider } from "@/components/providers/ReduxProvider";
 import { defaultMetadata } from "@/config/site";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { Toaster } from "sonner";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -48,6 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
+            <Toaster position="top-center" richColors closeButton />
           </NextIntlClientProvider>
         </ReduxProvider>
       </body>

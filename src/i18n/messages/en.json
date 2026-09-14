@@ -34,7 +34,8 @@
     "about": "About Us",
     "contact": "Contact Us",
     "language": "Language",
-    "switchLanguage": "التبديل إلى العربية"
+    "switchLanguage": "التبديل إلى العربية",
+    "optional": "optional"
   },
   "error": {
     "title": "Error Occurred",

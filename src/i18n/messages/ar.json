@@ -37,7 +37,8 @@
     "about": "عن المتجر",
     "contact": "اتصل بنا",
     "language": "اللغة",
-    "switchLanguage": "Switch to English"
+    "switchLanguage": "Switch to English",
+    "optional": "اختياري"
   },
   "error": {
     "title": "حدث خطأ",
