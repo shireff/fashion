@@ -66,35 +66,121 @@ function generateSKU(productName: string, color: string, size: string): string {
   return `${namePrefix || "PRD"}-${color}-${size}-${timestamp}`;
 }
 
-async function uploadToCloudinary(file: File): Promise<string> {
-  // Convert file to base64
-  const reader = new FileReader();
-  const base64 = await new Promise<string>((resolve, reject) => {
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
+function compressImage(file: File): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
     reader.readAsDataURL(file);
-  });
+    reader.onload = (event) => {
+      const img = document.createElement("img");
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-  // Upload to backend which uploads to Cloudinary
-  const token = storage.getItem("token") || "";
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload/image`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      image: base64,
-      folder: "products",
-    }),
-  });
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
 
-  if (!response.ok) {
-    throw new Error("Upload failed");
+        // Calculate new dimensions (max 1200px)
+        let width = img.width;
+        let height = img.height;
+        const maxSize = 1200;
+
+        if (width > height && width > maxSize) {
+          height = (height * maxSize) / width;
+          width = maxSize;
+        } else if (height > maxSize) {
+          width = (width * maxSize) / height;
+          height = maxSize;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            const compressedFile = new File([blob], file.name, {
+              type: file.type,
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          },
+          file.type,
+          0.85 // 85% quality
+        );
+      };
+      img.onerror = () => reject(new Error("Image load failed"));
+    };
+    reader.onerror = () => reject(new Error("File read failed"));
+  });
+}
+
+async function uploadToCloudinary(file: File): Promise<string> {
+  try {
+    // Compress image before upload
+    const compressedFile = await compressImage(file);
+
+    // Convert file to base64
+    const reader = new FileReader();
+    const base64 = await new Promise<string>((resolve, reject) => {
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        if (!result) {
+          reject(new Error("Failed to read file"));
+          return;
+        }
+        resolve(result);
+      };
+      reader.onerror = () => reject(new Error("File reading failed"));
+      reader.readAsDataURL(compressedFile);
+    });
+
+    // Validate base64
+    if (!base64.startsWith("data:image/")) {
+      throw new Error("Invalid image format");
+    }
+
+    // Upload to backend which uploads to Cloudinary
+    const token = storage.getItem("token") || "";
+
+    if (!token) {
+      throw new Error("Authentication required");
+    }
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload/image`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        image: base64,
+        folder: "products",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const errorMessage = data?.error?.message || data?.message || "Upload failed";
+      throw new Error(errorMessage);
+    }
+
+    if (!data.success || !data.data?.url) {
+      throw new Error("Invalid response from server");
+    }
+
+    return data.data.url;
+  } catch (error: any) {
+    console.error("Cloudinary upload error:", error);
+    throw new Error(error?.message || "Upload failed");
   }
-
-  const data = await response.json();
-  return data.data.url;
 }
 
 export default function NewProductPage() {
@@ -151,14 +237,28 @@ export default function NewProductPage() {
     setUploadingImages(true);
 
     try {
-      const uploadPromises = filesToUpload.map((file) => uploadToCloudinary(file));
+      const uploadPromises = filesToUpload.map(async (file) => {
+        // Validate file type
+        if (!file.type.startsWith("image/")) {
+          throw new Error(`${file.name} is not an image file`);
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error(`${file.name} is too large (max 5MB)`);
+        }
+
+        return uploadToCloudinary(file);
+      });
+
       const uploadedUrls = await Promise.all(uploadPromises);
       setImages([...images, ...uploadedUrls]);
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Upload error:", error);
       setModal({
         isOpen: true,
         type: "error",
-        message: t("admin.uploadFailed"),
+        message: error?.message || t("admin.uploadFailed"),
       });
     } finally {
       setUploadingImages(false);
