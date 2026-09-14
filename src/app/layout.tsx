@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cairo, Geist_Mono, Geist } from "next/font/google";
 import "./globals.css";
+import "./web-vitals-polyfill";
 import { cn } from "@/lib/utils";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getLocale } from "next-intl/server";

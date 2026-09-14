@@ -63,11 +63,11 @@ export default function AdminLoginPage() {
       // Update Redux state (backend returns 'admin' for admin login)
       const adminUser = response.data?.admin || response.data?.user;
       if (adminUser) {
-        console.log("✅ Admin user found:", {
-          id: adminUser._id,
-          email: adminUser.email,
-          role: adminUser.role,
-        });
+        // console.log("✅ Admin user found:", {
+        //   id: adminUser._id,
+        //   email: adminUser.email,
+        //   role: adminUser.role,
+        // });
 
         // Save admin user using safe storage
         storage.setItem("adminUser", JSON.stringify(adminUser));
