@@ -188,6 +188,18 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ["Orders", "Products"],
     }),
 
+    // Get recent orders for polling notifications
+    getRecentOrders: builder.query<
+      ApiResponse<{ orders: Order[] }>,
+      { since?: string } | undefined
+    >({
+      query: (params) => ({
+        url: API_ENDPOINTS.ORDERS.ADMIN.RECENT,
+        params: params || {},
+      }),
+      providesTags: ["Orders"],
+    }),
+
     // Users Management
     getAllUsers: builder.query<
       ApiResponse<PaginatedResponse<User> & {
@@ -255,6 +267,7 @@ export const {
   useUpdateOrderStatusMutation,
   useUpdateAdminNotesMutation,
   useGetStatisticsQuery,
+  useGetRecentOrdersQuery,
   useGetAllUsersQuery,
   useGetUserByIdQuery,
   useGetUserStatisticsQuery,

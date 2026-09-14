@@ -8,6 +8,8 @@
     "cart": "السلة",
     "account": "حسابي",
     "myAccount": "حسابي",
+    "myOrders": "طلباتي",
+    "myAddresses": "عناويني",
     "login": "تسجيل الدخول",
     "register": "التسجيل",
     "logout": "تسجيل الخروج",
@@ -18,6 +20,8 @@
     "errorMessage": "عذراً، حدث خطأ غير متوقع",
     "tryAgain": "حاول مرة أخرى",
     "backHome": "العودة للرئيسية",
+    "backToHome": "العودة للرئيسية",
+    "browseProducts": "تصفح المنتجات",
     "success": "تم بنجاح",
     "save": "حفظ",
     "cancel": "إلغاء",
@@ -27,7 +31,6 @@
     "submit": "إرسال",
     "close": "إغلاق",
     "viewAll": "عرض الكل",
-    "backToHome": "العودة للرئيسية",
     "currency": "جنيه",
     "noProducts": "لا توجد منتجات",
     "total": "الإجمالي",
@@ -44,6 +47,11 @@
     "backHome": "العودة للرئيسية",
     "errorCode": "رمز الخطأ",
     "helpText": "إذا استمرت المشكلة، يرجى التواصل مع الدعم الفني"
+  },
+  "errors": {
+    "pageNotFound": "الصفحة غير موجودة",
+    "pageNotFoundDescription": "عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "maybeYouLookingFor": "ربما تبحث عن:"
   },
   "account": {
     "profile": "الملف الشخصي",
@@ -111,6 +119,10 @@
     "errorLoadingProducts": "حدث خطأ أثناء تحميل المنتجات. يرجى المحاولة مرة أخرى.",
     "tryAgain": "إعادة المحاولة",
     "backToHome": "العودة للرئيسية"
+  },
+  "products": {
+    "size": "المقاس",
+    "color": "اللون"
   },
   "cart": {
     "title": "سلة التسوق",
@@ -282,9 +294,31 @@
     "shippingAddress": "عنوان الشحن",
     "summary": "ملخص الطلب",
     "subtotal": "المجموع الفرعي",
+    "shippingCost": "تكلفة الشحن",
     "shipping": "الشحن",
     "quantity": "الكمية",
+    "unitPrice": "سعر الوحدة",
+    "total": "الإجمالي",
+    "orderItems": "منتجات الطلب",
+    "paymentMethod": "طريقة الدفع",
+    "cashOnDelivery": "الدفع عند الاستلام",
+    "notes": "الملاحظات",
+    "statusHistory": "سجل الحالة",
+    "cancellationReason": "سبب الإلغاء",
+    "recipient": "المستلم",
+    "phone": "الهاتف",
+    "orderNotFound": "الطلب غير موجود",
+    "orderNotFoundDescription": "عذراً، الطلب الذي تبحث عنه غير موجود أو تم حذفه.",
+    "backToOrders": "العودة للطلبات",
     "errorLoadingOrders": "حدث خطأ أثناء تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+    "status": {
+      "pending": "قيد الانتظار",
+      "confirmed": "مؤكد",
+      "processing": "جاري التجهيز",
+      "shipped": "تم الشحن",
+      "delivered": "تم التوصيل",
+      "cancelled": "ملغي"
+    },
     "statuses": {
       "pending": "قيد الانتظار",
       "confirmed": "مؤكد",

@@ -11,7 +11,14 @@ interface NewOrderNotification {
   url: string;
 }
 
-export function initializeSocket(): Socket {
+export function initializeSocket(): Socket | null {
+  // Disable Socket.IO in production (Vercel doesn't support WebSockets)
+  const isProduction = process.env.NODE_ENV === "production";
+  if (isProduction) {
+    console.log("Socket.IO disabled in production (not supported on Vercel serverless)");
+    return null;
+  }
+
   if (socket) {
     return socket;
   }

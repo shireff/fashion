@@ -17,17 +17,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLogoutMutation } from "@/store/api/authApi";
-import { initializeSocket, disconnectSocket, onNewOrder, offNewOrder } from "@/lib/socket";
+import { useOrderNotifications } from "@/hooks/useOrderNotifications";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-
-interface NewOrderNotification {
-  title: string;
-  body: string;
-  orderNumber: string;
-  orderId: string;
-  totalAmount: number;
-  url: string;
-}
 
 export default function AdminDashboardLayout({
   children,
@@ -63,52 +54,10 @@ export default function AdminDashboardLayout({
     }
   }, []);
 
-  // Initialize Socket.IO and listen for new orders
-  useEffect(() => {
-    if (!adminUser) return;
-
-    const socket = initializeSocket();
-
-    const handleNewOrder = (data: NewOrderNotification) => {
-      console.log("New order received:", data);
-
-      // Show browser notification
-      if (Notification.permission === "granted") {
-        const notification = new Notification(data.title, {
-          body: data.body,
-          icon: "/icons/icon-192x192.png",
-          badge: "/icons/icon-96x96.png",
-          tag: `order-${data.orderId}`,
-          data: {
-            url: data.url,
-            orderId: data.orderId,
-          },
-          requireInteraction: true,
-        });
-
-        notification.onclick = () => {
-          window.focus();
-          router.push(data.url);
-          notification.close();
-        };
-      }
-
-      // Play notification sound (optional)
-      try {
-        const audio = new Audio("/sounds/notification.mp3");
-        audio.play().catch((err) => console.log("Audio play failed:", err));
-      } catch (err) {
-        console.log("Audio not available:", err);
-      }
-    };
-
-    onNewOrder(handleNewOrder);
-
-    return () => {
-      offNewOrder(handleNewOrder);
-      disconnectSocket();
-    };
-  }, [adminUser, router]);
+  // Use polling-based notifications (works on Vercel)
+  useOrderNotifications({
+    enabled: !!adminUser && Notification.permission === "granted",
+  });
 
   const requestNotificationPermission = async () => {
     if ("Notification" in window) {
@@ -180,8 +129,8 @@ export default function AdminDashboardLayout({
       {/* Sidebar */}
       <aside
         className={`fixed lg:sticky top-0 h-screen w-64 bg-white shadow-lg flex flex-col z-40 transition-transform duration-300 ${isRTL
-            ? `right-0 border-l ${isSidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}`
-            : `left-0 border-r ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`
+          ? `right-0 border-l ${isSidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}`
+          : `left-0 border-r ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`
           }`}
       >
         <div className="p-6 border-b">

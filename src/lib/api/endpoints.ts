@@ -29,6 +29,7 @@ export const API_ENDPOINTS = {
     CANCEL: (id: string) => `/orders/${id}/cancel`,
     ADMIN: {
       ALL: "/orders/admin/all",
+      RECENT: "/orders/admin/recent",
       UPDATE_STATUS: (id: string) => `/orders/admin/${id}/status`,
       UPDATE_NOTES: (id: string) => `/orders/admin/${id}/notes`,
       STATISTICS: "/orders/admin/statistics",
