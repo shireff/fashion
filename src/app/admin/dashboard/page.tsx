@@ -62,10 +62,10 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-start sm:items-center justify-between flex-col sm:flex-row gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t("admin.dashboard")}</h1>
-          <p className="text-gray-600 mt-1">{t("admin.statistics")}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t("admin.dashboard")}</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">{t("admin.statistics")}</p>
         </div>
         <InstallPWAButton />
       </div>
@@ -84,19 +84,19 @@ export default function AdminDashboardPage() {
           {statsCards.map((stat) => {
             const Icon = stat.icon;
             return (
-              <Card key={stat.title} className="p-6 hover:shadow-lg transition-shadow">
+              <Card key={stat.title} className="p-4 sm:p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-2">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-900">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 truncate">{stat.title}</p>
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
                       {stat.value.toLocaleString()}
                       {stat.suffix}
                     </p>
                   </div>
                   <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}
+                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center flex-shrink-0 ml-3`}
                   >
-                    <Icon className="w-6 h-6 text-white" />
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                 </div>
               </Card>
@@ -107,15 +107,15 @@ export default function AdminDashboardPage() {
 
       {/* Recent Orders */}
       <Card className="overflow-hidden">
-        <div className="p-6 border-b flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{t("admin.recentOrders")}</h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t("admin.recentOrders")}</h2>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">
               {stats?.recentOrders.length || 0} {t("orders.items")}
             </p>
           </div>
-          <Button asChild variant="outline">
-            <Link href="/admin/dashboard/orders">
+          <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
+            <Link href="/admin/dashboard/orders" className="flex items-center justify-center gap-2">
               {t("admin.viewAllOrders")}
               <ArrowRight className="w-4 h-4 mr-2" />
             </Link>
@@ -123,24 +123,24 @@ export default function AdminDashboardPage() {
         </div>
 
         {isLoading ? (
-          <div className="p-12 text-center text-gray-500">{t("common.loading")}</div>
+          <div className="p-8 sm:p-12 text-center text-sm sm:text-base text-gray-500">{t("common.loading")}</div>
         ) : !stats?.recentOrders.length ? (
-          <div className="p-12 text-center text-gray-500">{t("orders.noOrders")}</div>
+          <div className="p-8 sm:p-12 text-center text-sm sm:text-base text-gray-500">{t("orders.noOrders")}</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="text-right py-3 px-6 font-semibold text-gray-700">
+                  <th className="text-right py-2 sm:py-3 px-3 sm:px-6 font-semibold text-gray-700 text-xs sm:text-sm">
                     {t("orders.orderNumber")}
                   </th>
-                  <th className="text-right py-3 px-6 font-semibold text-gray-700">
+                  <th className="text-right py-2 sm:py-3 px-3 sm:px-6 font-semibold text-gray-700 text-xs sm:text-sm hidden sm:table-cell">
                     {t("admin.customer")}
                   </th>
-                  <th className="text-right py-3 px-6 font-semibold text-gray-700">
+                  <th className="text-right py-2 sm:py-3 px-3 sm:px-6 font-semibold text-gray-700 text-xs sm:text-sm">
                     {t("common.total")}
                   </th>
-                  <th className="text-right py-3 px-6 font-semibold text-gray-700">
+                  <th className="text-right py-2 sm:py-3 px-3 sm:px-6 font-semibold text-gray-700 text-xs sm:text-sm">
                     {t("orders.orderStatus")}
                   </th>
                 </tr>
@@ -148,20 +148,24 @@ export default function AdminDashboardPage() {
               <tbody>
                 {stats.recentOrders.map((order) => (
                   <tr key={order._id} className="border-b hover:bg-gray-50">
-                    <td className="py-4 px-6 font-mono text-sm">{order.orderNumber}</td>
-                    <td className="py-4 px-6">
-                      {typeof order.userId === "object" && order.userId
-                        ? `${order.userId.firstName} ${order.userId.lastName}`
-                        : typeof order.user === "object" && order.user
-                          ? `${order.user.firstName} ${order.user.lastName}`
-                          : "N/A"}
+                    <td className="py-3 sm:py-4 px-3 sm:px-6 font-mono text-xs sm:text-sm">
+                      <div className="truncate max-w-[100px] sm:max-w-none">{order.orderNumber}</div>
                     </td>
-                    <td className="py-4 px-6 font-semibold">
+                    <td className="py-3 sm:py-4 px-3 sm:px-6 text-xs sm:text-sm hidden sm:table-cell">
+                      <div className="truncate">
+                        {typeof order.userId === "object" && order.userId
+                          ? `${order.userId.firstName} ${order.userId.lastName}`
+                          : typeof order.user === "object" && order.user
+                            ? `${order.user.firstName} ${order.user.lastName}`
+                            : "N/A"}
+                      </div>
+                    </td>
+                    <td className="py-3 sm:py-4 px-3 sm:px-6 font-semibold text-xs sm:text-sm whitespace-nowrap">
                       {order.totalAmount} {t("common.currency")}
                     </td>
-                    <td className="py-4 px-6">
+                    <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === "delivered"
+                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${order.status === "delivered"
                           ? "bg-green-100 text-green-800"
                           : order.status === "cancelled"
                             ? "bg-red-100 text-red-800"

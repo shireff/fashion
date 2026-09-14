@@ -111,23 +111,23 @@ export default function AdminLoginPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-6 sm:p-8 shadow-2xl">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mb-4">
-              <Shield className="w-8 h-8 text-white" />
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-3 sm:p-4">
+        <Card className="w-full max-w-md p-4 sm:p-6 lg:p-8 shadow-2xl">
+          <div className="flex flex-col items-center mb-6 sm:mb-8">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
+              <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
               {t("admin.login")}
             </h1>
-            <p className="text-gray-600 mt-2 text-center text-sm sm:text-base">
+            <p className="text-gray-600 mt-2 text-center text-xs sm:text-sm lg:text-base">
               {t("admin.loginSubtitle")}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">{t("auth.email")}</Label>
+              <Label htmlFor="email" className="text-sm sm:text-base">{t("auth.email")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -136,12 +136,12 @@ export default function AdminLoginPage() {
                 onChange={handleChange}
                 required
                 autoComplete="email"
-                className="h-11"
+                className="h-10 sm:h-11 text-sm sm:text-base"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">{t("auth.password")}</Label>
+              <Label htmlFor="password" className="text-sm sm:text-base">{t("auth.password")}</Label>
               <Input
                 id="password"
                 name="password"
@@ -150,14 +150,14 @@ export default function AdminLoginPage() {
                 onChange={handleChange}
                 required
                 autoComplete="current-password"
-                className="h-11"
+                className="h-10 sm:h-11 text-sm sm:text-base"
               />
             </div>
 
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-base font-semibold"
+              className="w-full h-10 sm:h-11 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-sm sm:text-base font-semibold"
             >
               {isLoading ? t("admin.loggingIn") : t("admin.loginButton")}
             </Button>

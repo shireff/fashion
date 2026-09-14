@@ -10,8 +10,9 @@ interface BeforeInstallPromptEvent extends Event {
 
 export function InstallPWAButton() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+
   // Initialize isInstalled based on display mode
-  const [isInstalled, setIsInstalled] = useState(() => {
+  const [isInstalled] = useState(() => {
     if (typeof window !== "undefined") {
       return window.matchMedia("(display-mode: standalone)").matches;
     }
@@ -33,46 +34,37 @@ export function InstallPWAButton() {
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
-      alert(
-        "📱 للتثبيت:\n\n" +
-        "Chrome/Edge:\n" +
-        "• اضغط على القائمة (⋮)\n" +
-        "• اختر 'تثبيت التطبيق' أو 'Install app'\n\n" +
-        "Safari (iOS):\n" +
-        "• اضغط على زر المشاركة\n" +
-        "• اختر 'إضافة إلى الشاشة الرئيسية'"
-      );
+      // No install prompt available - could be iOS or already installed
       return;
     }
 
     try {
+      // Show the install prompt
       await deferredPrompt.prompt();
+
+      // Wait for user response
       const choiceResult = await deferredPrompt.userChoice;
 
       if (choiceResult.outcome === "accepted") {
         console.log("✅ PWA installed successfully");
-        setIsInstalled(true);
       }
 
+      // Clear the prompt
       setDeferredPrompt(null);
     } catch (error) {
       console.error("❌ Install failed:", error);
     }
   };
 
-  if (isInstalled) {
-    return (
-      <div className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm">
-        <Download className="w-4 h-4" />
-        <span>التطبيق مثبت بنجاح ✓</span>
-      </div>
-    );
+  // Don't show button if already installed or no prompt available
+  if (isInstalled || !deferredPrompt) {
+    return null;
   }
 
   return (
     <button
       onClick={handleInstallClick}
-      className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium shadow-sm"
+      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all text-sm font-medium shadow-md hover:shadow-lg"
     >
       <Download className="w-4 h-4" />
       <span>تثبيت التطبيق</span>

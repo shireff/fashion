@@ -126,9 +126,9 @@ export default function AdminDashboardLayout({
         variant="ghost"
         size="icon"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className={`fixed top-4 z-50 lg:hidden bg-white shadow-lg ${isRTL ? "right-4" : "left-4"}`}
+        className={`fixed top-3 sm:top-4 z-50 lg:hidden bg-white shadow-lg hover:bg-gray-50 ${isRTL ? "right-3 sm:right-4" : "left-3 sm:left-4"}`}
       >
-        {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {isSidebarOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
       </Button>
 
       {/* Mobile Backdrop */}
@@ -141,24 +141,24 @@ export default function AdminDashboardLayout({
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 h-screen w-64 bg-white shadow-lg flex flex-col z-40 transition-transform duration-300 ${isRTL
+        className={`fixed lg:sticky top-0 h-screen w-64 sm:w-72 bg-white shadow-lg flex flex-col z-40 transition-transform duration-300 ${isRTL
           ? `right-0 border-l ${isSidebarOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}`
           : `left-0 border-r ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`
           }`}
       >
-        <div className="p-6 border-b">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <div className="p-4 sm:p-6 border-b">
+          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             {t("common.siteName")}
           </h1>
-          <p className="text-sm text-gray-600 mt-1">{t("admin.dashboard")}</p>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">{t("admin.dashboard")}</p>
           {adminUser && (
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-gray-500 mt-2 truncate">
               {adminUser.firstName} {adminUser.lastName}
             </p>
           )}
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-2 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -168,24 +168,24 @@ export default function AdminDashboardLayout({
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
+                className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-colors text-sm sm:text-base ${isActive
                   ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
                   : "text-gray-700 hover:bg-gray-100"
                   }`}
               >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="font-medium truncate">{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t space-y-2">
+        <div className="p-3 sm:p-4 border-t space-y-2">
           {/* Language Switcher */}
           <LanguageSwitcher
             variant="outline"
             showIcon={true}
-            className="w-full justify-start"
+            className="w-full justify-start text-sm"
           />
 
           {/* Notification Permission Button */}
@@ -193,26 +193,28 @@ export default function AdminDashboardLayout({
             <Button
               onClick={requestNotificationPermission}
               variant="outline"
-              className="w-full justify-start gap-3"
+              size="sm"
+              className="w-full justify-start gap-2 sm:gap-3 text-sm"
             >
-              <Bell className="w-5 h-5" />
-              {t("admin.enableNotifications")}
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="truncate">{t("admin.enableNotifications")}</span>
             </Button>
           )}
 
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="w-full justify-start gap-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+            size="sm"
+            className="w-full justify-start gap-2 sm:gap-3 text-red-600 hover:text-red-700 hover:bg-red-50 text-sm"
           >
-            <LogOut className="w-5 h-5" />
-            {t("common.logout")}
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="truncate">{t("common.logout")}</span>
           </Button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">{children}</main>
+      <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-x-hidden">{children}</main>
     </div>
   );
 }
