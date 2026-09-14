@@ -562,6 +562,19 @@
       "notePlaceholder": "اكتب ملاحظتك هنا...",
       "noteHint": "هذه الملاحظة خاصة ولن يراها العميل"
     },
+    "orderActions": {
+      "updateStatus": "تحديث الحالة",
+      "addNote": "إضافة ملاحظة"
+    },
+    "orderInfo": {
+      "paymentMethod": "طريقة الدفع",
+      "customerNotes": "ملاحظات العميل",
+      "noCustomerNotes": "لا توجد ملاحظات من العميل",
+      "adminNotes": "ملاحظات إدارية",
+      "noAdminNotes": "لا توجد ملاحظات إدارية",
+      "statusTimeline": "سجل الحالات",
+      "noStatusHistory": "لا يوجد سجل لتغيير الحالات"
+    },
     "lowStock": {
       "title": "المنتجات منخفضة المخزون",
       "description": "المنتجات التي تحتاج إلى إعادة تخزين",

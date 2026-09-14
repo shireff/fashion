@@ -278,11 +278,33 @@
     "confirmCancel": "Are you sure you want to cancel this order?",
     "orderDetails": "Order Details",
     "shippingAddress": "Shipping Address",
+    "shippingCost": "Shipping Cost",
     "summary": "Summary",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
     "quantity": "Quantity",
+    "unitPrice": "Unit Price",
+    "total": "Total",
+    "orderItems": "Order Items",
+    "paymentMethod": "Payment Method",
+    "cashOnDelivery": "Cash on Delivery",
+    "notes": "Notes",
+    "statusHistory": "Status History",
+    "cancellationReason": "Cancellation Reason",
+    "recipient": "Recipient",
+    "phone": "Phone",
+    "orderNotFound": "Order Not Found",
+    "orderNotFoundDescription": "Sorry, the order you're looking for doesn't exist or has been deleted.",
+    "backToOrders": "Back to Orders",
     "errorLoadingOrders": "An error occurred while loading orders. Please try again.",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
     "statuses": {
       "pending": "Pending",
       "confirmed": "Confirmed",
@@ -290,7 +312,17 @@
       "shipped": "Shipped",
       "delivered": "Delivered",
       "cancelled": "Cancelled"
-    }
+    },
+    "updateStatus": "Update Order Status",
+    "currentStatus": "Current Status",
+    "newStatus": "New Status",
+    "selectStatus": "Select Status",
+    "note": "Note",
+    "notePlaceholder": "Add a note (optional)",
+    "noteHint": "This note will be added to the order history",
+    "orderAlreadyDelivered": "Order already delivered",
+    "orderAlreadyCancelled": "Order cancelled",
+    "noAvailableStatuses": "No available statuses to update"
   },
   "footer": {
     "description": "Modern fashion store offering the latest trends",
@@ -481,6 +513,139 @@
     "notificationsEnabled": "Notifications enabled successfully",
     "notificationsEnabledDesc": "You will receive notifications when new orders arrive",
     "newOrder": "New Order",
-    "newOrderMessage": "New order received #{orderNumber}"
+    "newOrderMessage": "New order received #{orderNumber}",
+    "notes": {
+      "addTitle": "Add Admin Note",
+      "privateNote": "Private note (not visible to customer)",
+      "noteLabel": "Note",
+      "notePlaceholder": "Write your note here...",
+      "noteHint": "This note is private and won't be visible to the customer"
+    },
+    "orderActions": {
+      "updateStatus": "Update Status",
+      "addNote": "Add Note"
+    },
+    "orderInfo": {
+      "paymentMethod": "Payment Method",
+      "customerNotes": "Customer Notes",
+      "noCustomerNotes": "No customer notes",
+      "adminNotes": "Admin Notes",
+      "noAdminNotes": "No admin notes",
+      "statusTimeline": "Status Timeline",
+      "noStatusHistory": "No status history"
+    },
+    "inventory": {
+      "updateTitle": "Update Inventory",
+      "variant": "Variant",
+      "selectVariant": "Select Variant",
+      "currentStock": "Current Stock",
+      "pieces": "pieces",
+      "newQuantity": "New Quantity",
+      "quantityPlaceholder": "e.g. 50",
+      "quantityHint": "Enter the new total quantity (not the difference)",
+      "reason": "Reason (optional)",
+      "selectReason": "Select Reason",
+      "noReason": "No reason",
+      "reasons": {
+        "restock": "Restock",
+        "return": "Customer Return",
+        "damage": "Damage",
+        "theft": "Theft/Loss",
+        "adjustment": "Inventory Adjustment",
+        "initial": "Initial Stock"
+      }
+    },
+    "lowStock": {
+      "title": "Low Stock Products",
+      "description": "Products that need restocking",
+      "threshold": "Stock Threshold",
+      "thresholdHint": "Show products with stock below this number",
+      "search": "Search",
+      "noProducts": "No low stock products",
+      "noProductsDesc": "All products have sufficient stock",
+      "foundCount": "Found {count} low stock product(s)",
+      "badges": {
+        "outOfStock": "Out of Stock",
+        "critical": "Critical",
+        "low": "Low"
+      }
+    },
+    "outOfStock": {
+      "title": "Out of Stock Products",
+      "description": "Products that are out of stock",
+      "noProducts": "No out of stock products",
+      "noProductsDesc": "All products are in stock!",
+      "foundCount": "{count} product(s) out of stock",
+      "badge": "Out of Stock",
+      "restock": "Restock"
+    },
+    "upload": {
+      "title": "Upload Images",
+      "dragOrClick": "Drag images here or click to select",
+      "dropHere": "Drop images here...",
+      "maxReached": "Maximum limit reached ({max} images)",
+      "uploading": "Uploading images...",
+      "fileTypes": "PNG, JPG, WEBP (max {maxSize}MB)",
+      "count": "Images: {current} of {max}",
+      "maxSizeError": "File size must be less than {maxSize}MB",
+      "maxFilesError": "You can upload a maximum of {max} images",
+      "uploadError": "Failed to upload images. Try again.",
+      "uploadFailed": "Failed to upload image",
+      "imageAlt": "Image {index}",
+      "remove": "Remove",
+      "uploadedImages": "Uploaded Images",
+      "canAddMore": "You can add {count} more image(s)",
+      "remainingSlots": "{count} image(s) remaining",
+      "removeToAddMore": "Remove an image to add more",
+      "primary": "Primary",
+      "helpText": "The first image will be the primary product image"
+    }
+  },
+  "users": {
+    "title": "Users Management",
+    "description": "View and manage all users",
+    "search": "Search",
+    "searchPlaceholder": "Search by name, email, or phone...",
+    "role": "Role",
+    "allRoles": "All Roles",
+    "user": "User",
+    "admin": "Admin",
+    "allStatuses": "All Statuses",
+    "active": "Active",
+    "blocked": "Blocked",
+    "resetFilters": "Reset",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "totalUsers": "{count} user(s)",
+    "pageInfo": "Page {current} of {total}",
+    "joinedAt": "Joined {date}",
+    "block": "Block",
+    "unblock": "Unblock",
+    "noUsers": "No users found",
+    "noUsersDesc": "No users were found",
+    "errorTitle": "Error Loading Users",
+    "errorMessage": "An error occurred while loading users",
+    "blockUser": "Block User",
+    "unblockUser": "Unblock User",
+    "blockConfirmMessage": "Are you sure you want to block user {name}?",
+    "unblockConfirmMessage": "Are you sure you want to unblock user {name}?",
+    "blockWarning": "⚠️ Warning: Blocking this user will:",
+    "blockEffect1": "Prevent them from logging in",
+    "blockEffect2": "Cancel all active sessions",
+    "blockEffect3": "Prevent them from placing new orders",
+    "blockConfirm": "Block User",
+    "unblockConfirm": "Unblock",
+    "userBlocked": "User blocked successfully",
+    "userUnblocked": "User unblocked successfully"
+  },
+  "products": {
+    "size": "Size",
+    "color": "Color"
+  },
+  "errors": {
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundDescription": "Sorry, the page you're looking for doesn't exist or has been moved.",
+    "maybeYouLookingFor": "Maybe you're looking for:"
   }
 }

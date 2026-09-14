@@ -200,6 +200,12 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ["Orders"],
     }),
 
+    // Get order by ID (admin)
+    getOrderByIdAdmin: builder.query<ApiResponse<{ order: Order }>, string>({
+      query: (id) => API_ENDPOINTS.ORDERS.ADMIN.BY_ID(id),
+      providesTags: (result, error, id) => [{ type: "Orders", id }],
+    }),
+
     // Users Management
     getAllUsers: builder.query<
       ApiResponse<PaginatedResponse<User> & {
@@ -268,6 +274,7 @@ export const {
   useUpdateAdminNotesMutation,
   useGetStatisticsQuery,
   useGetRecentOrdersQuery,
+  useGetOrderByIdAdminQuery,
   useGetAllUsersQuery,
   useGetUserByIdQuery,
   useGetUserStatisticsQuery,

@@ -30,6 +30,7 @@ export const API_ENDPOINTS = {
     ADMIN: {
       ALL: "/orders/admin/all",
       RECENT: "/orders/admin/recent",
+      BY_ID: (id: string) => `/orders/admin/${id}`,
       UPDATE_STATUS: (id: string) => `/orders/admin/${id}/status`,
       UPDATE_NOTES: (id: string) => `/orders/admin/${id}/notes`,
       STATISTICS: "/orders/admin/statistics",
