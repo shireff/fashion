@@ -3,6 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
+console.log("🌐 [API Config] Base URL:", API_URL);
+
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
@@ -23,6 +25,14 @@ export const baseApi = createApi({
         headers.set("Accept-Language", locale === "en" ? "en-US" : "ar-EG");
       }
       return headers;
+    },
+    validateStatus: (response, body) => {
+      console.log("📡 [API Response]", {
+        status: response.status,
+        ok: response.ok,
+        bodySuccess: body?.success,
+      });
+      return response.ok;
     },
   }),
   tagTypes: ["Auth", "Products", "Categories", "Orders", "Addresses", "Shipping", "Cart", "Users"],

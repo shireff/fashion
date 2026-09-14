@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/ui/modal";
 import { Shield, AlertCircle } from "lucide-react";
-import { getErrorMessage } from "@/lib/utils/errorHandler";
 import { storage } from "@/lib/utils/storage";
 
 export default function AdminLoginPage() {
@@ -30,6 +29,7 @@ export default function AdminLoginPage() {
   const [errorModal, setErrorModal] = useState({
     isOpen: false,
     message: "",
+    details: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,64 +39,72 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("📝 Starting admin login...");
-
     try {
-      console.log("⏳ Calling adminLogin API...");
-      const response = await adminLogin(formData).unwrap();
+      // Call the mutation
+      const result = await adminLogin(formData);
 
-      console.log("✅ API response received:", {
-        success: response.success,
-        hasToken: !!response.data?.token,
-        hasAdmin: !!response.data?.admin,
-        hasUser: !!response.data?.user,
-      });
+      // Check if result has error
+      if ("error" in result) {
+        const errorDetails = JSON.stringify(result.error, null, 2);
+        throw new Error(`API Error: ${errorDetails}`);
+      }
 
-      // Save token using safe storage
-      if (response.data?.token) {
+      // Extract data
+      const response = result.data;
+
+      // Validate response structure
+      if (!response || !response.success || !response.data) {
+        throw new Error(`Invalid response: ${JSON.stringify(response)}`);
+      }
+
+      // Save token
+      if (response.data.token) {
         storage.setItem("token", response.data.token);
-        console.log("✅ Token saved");
       } else {
-        console.error("❌ No token in response");
+        throw new Error("No token in response");
       }
 
-      // Update Redux state (backend returns 'admin' for admin login)
-      const adminUser = response.data?.admin || response.data?.user;
+      // Get admin user
+      const adminUser = response.data.admin || response.data.user;
       if (adminUser) {
-        // console.log("✅ Admin user found:", {
-        //   id: adminUser._id,
-        //   email: adminUser.email,
-        //   role: adminUser.role,
-        // });
-
-        // Save admin user using safe storage
         storage.setItem("adminUser", JSON.stringify(adminUser));
-        console.log("✅ Admin user saved to storage");
-
         dispatch(setAdminAuth({ user: adminUser }));
-        console.log("✅ Redux state updated");
       } else {
-        console.error("❌ No admin user in response");
+        throw new Error("No user data in response");
       }
 
-      // Redirect to dashboard
-      console.log("✅ Redirecting to dashboard");
+      // Redirect
       router.push("/admin/dashboard");
     } catch (error: any) {
-      console.error("❌ Login error:", {
-        error,
-        status: error?.status,
-        data: error?.data,
-        message: error?.message,
-      });
+      // Format error for display
+      let errorMessage = t("common.errorMessage");
+      let errorDetails = "";
 
-      // Show detailed error message
-      const errorMessage = getErrorMessage(error, t("common.errorMessage"));
-      console.error("❌ Error message to show:", errorMessage);
+      if (error?.data?.error?.message) {
+        errorMessage = error.data.error.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      }
+
+      // Capture detailed error info for iPhone debugging
+      errorDetails = JSON.stringify(
+        {
+          type: typeof error,
+          constructor: error?.constructor?.name,
+          status: error?.status,
+          message: error?.message,
+          data: error?.data,
+        },
+        null,
+        2
+      );
 
       setErrorModal({
         isOpen: true,
         message: errorMessage,
+        details: errorDetails,
       });
     }
   };
@@ -157,22 +165,36 @@ export default function AdminLoginPage() {
         </Card>
       </div>
 
-      {/* Error Modal */}
+      {/* Error Modal with Debug Details */}
       <Modal
         isOpen={errorModal.isOpen}
-        onClose={() => setErrorModal({ isOpen: false, message: "" })}
-        size="sm"
+        onClose={() => setErrorModal({ isOpen: false, message: "", details: "" })}
+        size="lg"
       >
-        <div className="flex flex-col items-center text-center space-y-4">
-          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-            <AlertCircle className="w-8 h-8 text-red-600" />
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+              <AlertCircle className="w-6 h-6 text-red-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">{t("common.error")}</h3>
+              <p className="text-sm text-gray-600">{errorModal.message}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{t("common.error")}</h3>
-            <p className="text-gray-600">{errorModal.message}</p>
-          </div>
+
+          {errorModal.details && (
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 max-h-96 overflow-auto">
+              <p className="text-xs font-semibold text-gray-700 mb-2">
+                Debug Info (iPhone):
+              </p>
+              <pre className="text-xs text-gray-600 whitespace-pre-wrap font-mono">
+                {errorModal.details}
+              </pre>
+            </div>
+          )}
+
           <Button
-            onClick={() => setErrorModal({ isOpen: false, message: "" })}
+            onClick={() => setErrorModal({ isOpen: false, message: "", details: "" })}
             className="w-full bg-red-600 hover:bg-red-700"
           >
             {t("common.close")}
