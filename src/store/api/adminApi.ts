@@ -148,7 +148,7 @@ export const adminApi = baseApi.injectEndpoints({
     >({
       query: ({ id, data }) => ({
         url: API_ENDPOINTS.ORDERS.ADMIN.UPDATE_STATUS(id),
-        method: "PUT",
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [
