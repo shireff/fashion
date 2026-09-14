@@ -27,8 +27,8 @@ export function useOrderNotifications({
   );
 
   const showNotification = useCallback((order: Order) => {
-    // Show browser notification
-    if (Notification.permission === "granted") {
+    // Show browser notification only if API is available
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
       const notification = new Notification("طلب جديد 🛍️", {
         body: `طلب رقم ${order.orderNumber} - ${order.totalAmount} جنيه`,
         icon: "/icons/icon-192x192.png",

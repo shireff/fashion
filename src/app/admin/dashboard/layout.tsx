@@ -37,7 +37,7 @@ export default function AdminDashboardLayout({
 
   // Initialize notification permission state directly
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
+    if (typeof window !== "undefined" && typeof Notification !== "undefined") {
       return Notification.permission;
     }
     return "default";
@@ -60,11 +60,11 @@ export default function AdminDashboardLayout({
 
   // Use polling-based notifications (works on Vercel)
   useOrderNotifications({
-    enabled: !!adminUser && Notification.permission === "granted",
+    enabled: !!adminUser && typeof Notification !== "undefined" && Notification.permission === "granted",
   });
 
   const requestNotificationPermission = async () => {
-    if ("Notification" in window) {
+    if (typeof Notification !== "undefined") {
       const permission = await Notification.requestPermission();
       setNotificationPermission(permission);
 
@@ -189,7 +189,7 @@ export default function AdminDashboardLayout({
           />
 
           {/* Notification Permission Button */}
-          {notificationPermission !== "granted" && (
+          {typeof Notification !== "undefined" && notificationPermission !== "granted" && (
             <Button
               onClick={requestNotificationPermission}
               variant="outline"
