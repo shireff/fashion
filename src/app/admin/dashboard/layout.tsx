@@ -76,10 +76,22 @@ export default function AdminDashboardLayout({
 
   const handleLogout = async () => {
     try {
-      await logout().unwrap();
+      // Clear token from localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+      }
+
+      // Try to call logout endpoint (optional - won't block if it fails)
+      logout().catch(() => {
+        // Ignore logout API errors - already cleared token locally
+      });
+
+      // Redirect to login
       router.push("/admin/login");
     } catch (error) {
       console.error("Logout failed:", error);
+      // Still redirect even if logout fails
+      router.push("/admin/login");
     }
   };
 
