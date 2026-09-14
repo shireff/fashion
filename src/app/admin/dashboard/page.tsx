@@ -10,7 +10,21 @@ import { InstallPWAButton } from "@/components/admin/InstallPWAButton";
 
 export default function AdminDashboardPage() {
   const t = useTranslations();
-  const { data, isLoading } = useGetStatisticsQuery();
+  const { data, isLoading, error } = useGetStatisticsQuery();
+
+  // Show error details on iPhone
+  if (error) {
+    return (
+      <div className="p-8">
+        <Card className="p-6 border-red-200 bg-red-50">
+          <h2 className="text-xl font-bold text-red-900 mb-4">API Error</h2>
+          <pre className="text-sm text-red-700 whitespace-pre-wrap overflow-auto max-h-96 bg-white p-4 rounded">
+            {JSON.stringify(error, null, 2)}
+          </pre>
+        </Card>
+      </div>
+    );
+  }
 
   const stats = data?.data;
 

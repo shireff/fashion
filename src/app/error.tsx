@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ export default function Error({
   const t = useTranslations("common");
   const tError = useTranslations("error");
   const router = useRouter();
+  const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     console.error("Application error:", error);
@@ -54,7 +55,34 @@ export default function Error({
               {tError("errorCode")}: {error.digest}
             </p>
           )}
+
+          {/* Error Details Button */}
+          <button
+            onClick={() => setShowDebug(!showDebug)}
+            className="mt-4 text-sm text-red-600 hover:text-red-700 underline"
+          >
+            {showDebug ? "إخفاء التفاصيل" : "عرض تفاصيل الخطأ"}
+          </button>
         </div>
+
+        {/* Debug Info */}
+        {showDebug && (
+          <div className="bg-gray-900 text-left rounded-lg p-4 max-h-96 overflow-auto">
+            <p className="text-xs text-gray-400 mb-2 font-bold">Error Details:</p>
+            <pre className="text-xs text-green-400 whitespace-pre-wrap font-mono">
+              {JSON.stringify(
+                {
+                  name: error.name,
+                  message: error.message,
+                  stack: error.stack,
+                  digest: error.digest,
+                },
+                null,
+                2
+              )}
+            </pre>
+          </div>
+        )}
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
