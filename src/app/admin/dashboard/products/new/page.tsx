@@ -243,9 +243,9 @@ export default function NewProductPage() {
           throw new Error(`${file.name} is not an image file`);
         }
 
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          throw new Error(`${file.name} is too large (max 5MB)`);
+        // Validate file size (max 50MB)
+        if (file.size > 50 * 1024 * 1024) {
+          throw new Error(`${file.name} is too large (max 50MB)`);
         }
 
         return uploadToCloudinary(file);
