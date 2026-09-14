@@ -7,7 +7,7 @@ export interface ProductVariant {
   colorNameAr?: string;
   colorNameEn?: string;
   quantity: number;
-  stock?: number; 
+  stock?: number;
   sku: string;
 }
 
@@ -34,3 +34,28 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CreateProductRequest {
+  name: BilingualText;
+  slug: BilingualText;
+  description: BilingualText;
+  categoryId: string;
+  price: number;
+  compareAtPrice?: number;
+  images: string[];
+  variants: {
+    color: string;
+    colorNameAr: string;
+    colorNameEn: string;
+    size: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
+    quantity: number;
+    sku: string;
+  }[];
+  material?: BilingualText;
+  careInstructions?: BilingualText;
+  isActive: boolean;
+  isFeatured: boolean;
+  displayOrder: number;
+}
+
+export interface UpdateProductRequest extends Partial<CreateProductRequest> { }

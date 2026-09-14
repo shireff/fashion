@@ -15,3 +15,9 @@ export * from "./admin.types";
 
 // Export BilingualText from api
 export type { BilingualText } from "./api";
+
+// Re-export specific types to avoid conflicts
+export type {
+    CreateProductRequest,
+    UpdateProductRequest,
+} from "./product";
