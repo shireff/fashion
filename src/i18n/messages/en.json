@@ -44,7 +44,10 @@
     "tryAgain": "Try Again",
     "backHome": "Back to Home",
     "errorCode": "Error Code",
-    "helpText": "If the problem persists, please contact technical support"
+    "helpText": "If the problem persists, please contact technical support",
+    "unexpectedError": "Unexpected Error Occurred",
+    "unexpectedErrorDescription": "We apologize for the inconvenience. Please refresh the page or try again.",
+    "reloadPage": "Reload Page"
   },
   "account": {
     "profile": "Profile",

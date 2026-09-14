@@ -9,7 +9,7 @@ if (typeof window !== "undefined") {
   const originalError = console.error;
   console.error = (...args: any[]) => {
     const errorString = args.join(" ");
-    
+
     // Suppress Web Vitals startTime errors
     if (
       errorString.includes("startTime") ||
@@ -19,10 +19,22 @@ if (typeof window !== "undefined") {
       // Silently ignore Web Vitals errors
       return;
     }
-    
+
     // Log other errors normally
     originalError.apply(console, args);
   };
+
+  // Global error handler for uncaught errors
+  window.addEventListener("error", (event) => {
+    if (
+      event.message?.includes("startTime") ||
+      event.message?.includes("reportAllChanges") ||
+      event.message?.includes("web-vitals")
+    ) {
+      event.preventDefault();
+      return;
+    }
+  });
 
   // Ensure Performance API is available
   if (typeof window.performance === "undefined") {
@@ -32,12 +44,23 @@ if (typeof window !== "undefined") {
       navigation: {},
       getEntriesByType: () => [],
       getEntriesByName: () => [],
-      mark: () => {},
-      measure: () => {},
-      clearMarks: () => {},
-      clearMeasures: () => {},
+      mark: () => { },
+      measure: () => { },
+      clearMarks: () => { },
+      clearMeasures: () => { },
+    };
+  }
+
+  // Polyfill for PerformanceObserver if needed
+  if (typeof window.PerformanceObserver === "undefined") {
+    (window as any).PerformanceObserver = class {
+      observe() { }
+      disconnect() { }
+      takeRecords() {
+        return [];
+      }
     };
   }
 }
 
-export {};
+export { };

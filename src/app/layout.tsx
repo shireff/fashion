@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Cairo, Geist_Mono, Geist } from "next/font/google";
 import "./globals.css";
+import "./error-handler";
 import "./web-vitals-polyfill";
 import { cn } from "@/lib/utils";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getLocale } from "next-intl/server";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
+import { ErrorBoundaryWithTranslations } from "@/components/ErrorBoundary";
 import { defaultMetadata } from "@/config/site";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -46,10 +48,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-full flex flex-col">
         <ReduxProvider>
           <NextIntlClientProvider messages={messages}>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <Toaster position="top-center" richColors closeButton />
+            <ErrorBoundaryWithTranslations>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <Toaster position="top-center" richColors closeButton />
+            </ErrorBoundaryWithTranslations>
           </NextIntlClientProvider>
         </ReduxProvider>
       </body>

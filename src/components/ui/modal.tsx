@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { Button } from "./button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,6 +12,13 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -23,7 +31,7 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const sizeClasses = {
     sm: "max-w-sm",
@@ -33,7 +41,7 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
     full: "max-w-7xl",
   };
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" dir="rtl">
       {/* Backdrop */}
       <div
@@ -60,4 +68,6 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
