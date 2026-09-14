@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setAdminAuth, clearAdminAuth } from "@/store";
+import { storage } from "@/lib/utils/storage";
 
 export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -14,9 +15,11 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Check localStorage for token and admin user
-      const token = localStorage.getItem("token");
-      const storedAdminUser = localStorage.getItem("adminUser");
+      // Check storage for token and admin user
+      const token = storage.getItem("token");
+      const storedAdminUser = storage.getItem("adminUser");
+
+      console.log("🔍 AdminAuthGuard checking:", { hasToken: !!token, hasUser: !!storedAdminUser });
 
       if (token && storedAdminUser) {
         try {
@@ -25,6 +28,7 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
           // Restore admin state if not already authenticated
           if (!isAuthenticated || !adminUser) {
             dispatch(setAdminAuth({ user: parsedUser }));
+            console.log("✅ Admin state restored");
           }
 
           // If on login page and authenticated, redirect to dashboard
@@ -32,9 +36,10 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
             router.replace("/admin/dashboard");
           }
         } catch (error) {
+          console.error("❌ Invalid stored admin data:", error);
           // Invalid stored data, clear everything
-          localStorage.removeItem("token");
-          localStorage.removeItem("adminUser");
+          storage.removeItem("token");
+          storage.removeItem("adminUser");
           dispatch(clearAdminAuth());
 
           // Redirect to login if not already there

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -13,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Modal } from "@/components/ui/modal";
 import { Shield, AlertCircle } from "lucide-react";
 import { getErrorMessage } from "@/lib/utils/errorHandler";
+import { storage } from "@/lib/utils/storage";
 
 export default function AdminLoginPage() {
   const t = useTranslations();
@@ -37,29 +39,64 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("📝 Starting admin login...");
+
     try {
+      console.log("⏳ Calling adminLogin API...");
       const response = await adminLogin(formData).unwrap();
 
-      // Save token to localStorage
+      console.log("✅ API response received:", {
+        success: response.success,
+        hasToken: !!response.data?.token,
+        hasAdmin: !!response.data?.admin,
+        hasUser: !!response.data?.user,
+      });
+
+      // Save token using safe storage
       if (response.data?.token) {
-        localStorage.setItem("token", response.data.token);
+        storage.setItem("token", response.data.token);
+        console.log("✅ Token saved");
+      } else {
+        console.error("❌ No token in response");
       }
 
       // Update Redux state (backend returns 'admin' for admin login)
       const adminUser = response.data?.admin || response.data?.user;
       if (adminUser) {
-        // Save admin user to localStorage for persistence
-        localStorage.setItem("adminUser", JSON.stringify(adminUser));
+        console.log("✅ Admin user found:", {
+          id: adminUser._id,
+          email: adminUser.email,
+          role: adminUser.role,
+        });
+
+        // Save admin user using safe storage
+        storage.setItem("adminUser", JSON.stringify(adminUser));
+        console.log("✅ Admin user saved to storage");
 
         dispatch(setAdminAuth({ user: adminUser }));
+        console.log("✅ Redux state updated");
+      } else {
+        console.error("❌ No admin user in response");
       }
 
       // Redirect to dashboard
+      console.log("✅ Redirecting to dashboard");
       router.push("/admin/dashboard");
-    } catch (error) {
+    } catch (error: any) {
+      console.error("❌ Login error:", {
+        error,
+        status: error?.status,
+        data: error?.data,
+        message: error?.message,
+      });
+
+      // Show detailed error message
+      const errorMessage = getErrorMessage(error, t("common.errorMessage"));
+      console.error("❌ Error message to show:", errorMessage);
+
       setErrorModal({
         isOpen: true,
-        message: getErrorMessage(error as never, t("common.errorOccurred")),
+        message: errorMessage,
       });
     }
   };

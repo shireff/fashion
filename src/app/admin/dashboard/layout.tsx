@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useLogoutMutation } from "@/store/api/authApi";
 import { useOrderNotifications } from "@/hooks/useOrderNotifications";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { storage } from "@/lib/utils/storage";
 
 export default function AdminDashboardLayout({
   children,
@@ -77,19 +78,22 @@ export default function AdminDashboardLayout({
     }
   };
 
-  const handleLogout = () => {
-    // Clear token from localStorage immediately
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
+  const handleLogout = async () => {
+    try {
+      // Call logout endpoint first (while token is still available)
+      await logout().unwrap();
+      console.log("✅ Logout API successful");
+    } catch (error) {
+      // If logout fails (e.g., expired token), continue anyway
+      console.warn("⚠️ Logout API failed (continuing):", error);
+    } finally {
+      // Always clear storage and redirect
+      storage.removeItem("token");
+      storage.removeItem("adminUser");
+      console.log("✅ Storage cleared");
+
+      router.push("/admin/login");
     }
-
-    // Try to call logout endpoint in background (fire and forget)
-    logout().catch(() => {
-      // Silently ignore any logout API errors
-    });
-
-    // Redirect to login immediately
-    router.push("/admin/login");
   };
 
   const navItems = [

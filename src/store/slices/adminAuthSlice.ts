@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { User } from "@/types";
+import { storage } from "@/lib/utils/storage";
 
 interface AdminAuthState {
   isAuthenticated: boolean;
@@ -28,10 +29,10 @@ const adminAuthSlice = createSlice({
       state.isAuthenticated = false;
       state.adminUser = null;
       state.isLoading = false;
-      // Clear localStorage when logging out
+      // Clear storage when logging out
       if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("adminUser");
+        storage.removeItem("token");
+        storage.removeItem("adminUser");
       }
     },
     setAdminLoading: (state, action: PayloadAction<boolean>) => {
