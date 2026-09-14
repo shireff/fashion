@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
                     {t("common.total")}
                   </th>
                   <th className="text-right py-3 px-6 font-semibold text-gray-700">
-                    {t("orders.status")}
+                    {t("orders.orderStatus")}
                   </th>
                 </tr>
               </thead>

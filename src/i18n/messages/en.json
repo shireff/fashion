@@ -270,7 +270,7 @@
     "title": "My Orders",
     "orderNumber": "Order Number",
     "orderDate": "Order Date",
-    "status": "Status",
+    "orderStatus": "Status",
     "items": "Items",
     "noOrders": "No orders yet",
     "noOrdersDescription": "You haven't placed any orders yet. Browse our products and order now!",

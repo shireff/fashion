@@ -72,7 +72,7 @@ export default function OrdersManagementPage() {
         {/* Filter */}
         <Card className="p-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <Label className="font-medium whitespace-nowrap">{t("orders.status")}:</Label>
+            <Label className="font-medium whitespace-nowrap">{t("orders.orderStatus")}:</Label>
             <Select
               value={statusFilter}
               onValueChange={(value) => dispatch(setStatusFilter(value || ""))}
@@ -127,7 +127,7 @@ export default function OrdersManagementPage() {
                         {t("common.total")}
                       </th>
                       <th className="text-right py-4 px-6 font-semibold text-gray-700">
-                        {t("orders.status")}
+                        {t("orders.orderStatus")}
                       </th>
                       <th className="text-right py-4 px-6 font-semibold text-gray-700">
                         {t("orders.orderDate")}

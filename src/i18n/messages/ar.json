@@ -284,7 +284,7 @@
     "title": "طلباتي",
     "orderNumber": "رقم الطلب",
     "orderDate": "تاريخ الطلب",
-    "status": "الحالة",
+    "orderStatus": "الحالة",
     "items": "عدد المنتجات",
     "noOrders": "لا توجد طلبات",
     "noOrdersDescription": "لم تقم بأي طلبات بعد. تصفح منتجاتنا واطلب الآن!",
