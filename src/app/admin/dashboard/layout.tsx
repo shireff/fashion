@@ -33,14 +33,17 @@ export default function AdminDashboardLayout({
   const { adminUser } = useAppSelector((state) => state.adminAuth);
   const [logout] = useLogoutMutation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
+
+  // Initialize notification permission state directly
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      return Notification.permission;
+    }
+    return "default";
+  });
 
   // Request notification permission on mount
   useEffect(() => {
-    if ("Notification" in window) {
-      setNotificationPermission(Notification.permission);
-    }
-
     // Register service worker for push notifications
     if ("serviceWorker" in navigator && "PushManager" in window) {
       navigator.serviceWorker
