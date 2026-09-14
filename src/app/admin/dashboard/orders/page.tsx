@@ -170,7 +170,7 @@ export default function OrdersManagementPage() {
                         <td className="py-4 px-6">
                           <div className="flex items-center justify-center">
                             <Button asChild variant="ghost" size="sm">
-                              <Link href={`/account/orders/${order._id}`}>
+                              <Link href={`/admin/dashboard/orders/${order._id}`}>
                                 <Eye className="w-4 h-4" />
                               </Link>
                             </Button>
@@ -218,7 +218,7 @@ export default function OrdersManagementPage() {
                         {t(`orders.statuses.${order.status}`)}
                       </button>
                       <Button asChild variant="outline" size="sm">
-                        <Link href={`/account/orders/${order._id}`}>
+                        <Link href={`/admin/dashboard/orders/${order._id}`}>
                           <Eye className="w-4 h-4 ml-1" />
                           {t("admin.view")}
                         </Link>
