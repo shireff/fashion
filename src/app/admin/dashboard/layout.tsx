@@ -74,25 +74,19 @@ export default function AdminDashboardLayout({
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      // Clear token from localStorage
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
-      }
-
-      // Try to call logout endpoint (optional - won't block if it fails)
-      logout().catch(() => {
-        // Ignore logout API errors - already cleared token locally
-      });
-
-      // Redirect to login
-      router.push("/admin/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-      // Still redirect even if logout fails
-      router.push("/admin/login");
+  const handleLogout = () => {
+    // Clear token from localStorage immediately
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
     }
+
+    // Try to call logout endpoint in background (fire and forget)
+    logout().catch(() => {
+      // Silently ignore any logout API errors
+    });
+
+    // Redirect to login immediately
+    router.push("/admin/login");
   };
 
   const navItems = [
