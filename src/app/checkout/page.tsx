@@ -7,11 +7,13 @@ import { useAppSelector, useAppDispatch } from "@/store";
 import { clearCart } from "@/store/slices/cartSlice";
 import { useGetAddressesQuery } from "@/store/api/addressesApi";
 import { useCreateOrderMutation } from "@/store/api/ordersApi";
+import { useCalculateShippingMutation } from "@/store/api/shippingApi";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AddressCardSkeleton } from "@/components/skeletons";
 import { getErrorMessage } from "@/lib/utils/errorHandler";
 import { getLocalizedText } from "@/lib/utils/bilingual";
+import { Truck, AlertCircle } from "lucide-react";
 import type { Address } from "@/types/address";
 import { ErrorModal } from "@/components/ui/error-modal";
 import { SuccessModal } from "@/components/ui/success-modal";
@@ -30,6 +32,7 @@ export default function CheckoutPage() {
     skip: !user,
   });
   const [createOrder, { isLoading }] = useCreateOrderMutation();
+  const [calculateShipping, { isLoading: calculatingShipping }] = useCalculateShippingMutation();
 
   const addresses: Address[] = useMemo(() => {
     if (Array.isArray(addressesData?.data)) {
@@ -49,6 +52,7 @@ export default function CheckoutPage() {
 
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [notes, setNotes] = useState("");
+  const [shippingCost, setShippingCost] = useState<number | null>(null);
   const [errorModal, setErrorModal] = useState<{ isOpen: boolean; title: string; message: string }>({
     isOpen: false,
     title: "",
@@ -72,6 +76,41 @@ export default function CheckoutPage() {
       return;
     }
   }, [user, items, router]);
+
+  // Calculate shipping when address changes
+  useEffect(() => {
+    const fetchShippingCost = async () => {
+      if (!effectiveSelectedAddress || items.length === 0) {
+        setShippingCost(null);
+        return;
+      }
+
+      const selectedAddressObj = addresses.find((addr) => addr._id === effectiveSelectedAddress);
+      if (!selectedAddressObj) {
+        setShippingCost(null);
+        return;
+      }
+
+      try {
+        const response = await calculateShipping({
+          governorate: selectedAddressObj.governorate,
+          city: selectedAddressObj.city,
+          cartTotal: totalAmount,
+        }).unwrap();
+
+        if (response.success && response.data.shippingFee !== undefined && response.data.shippingFee !== null) {
+          setShippingCost(response.data.shippingFee);
+        } else {
+          setShippingCost(null);
+        }
+      } catch (err) {
+        // If shipping calculation fails, set to null (will show "calculated at checkout")
+        setShippingCost(null);
+      }
+    };
+
+    fetchShippingCost();
+  }, [effectiveSelectedAddress, addresses, items, calculateShipping, totalAmount]);
 
   if (!user || items.length === 0) {
     return null;
@@ -276,14 +315,39 @@ export default function CheckoutPage() {
                     <span className="font-semibold">{totalAmount} {tCommon("currency")}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
-                    <span>{tCart("shipping")}</span>
-                    <span className="font-semibold text-purple-600">{tCart("calculated")}</span>
+                    <div className="flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-gray-400" />
+                      <span>{tCart("shipping")}</span>
+                    </div>
+                    {calculatingShipping ? (
+                      <span className="text-sm text-gray-500">جاري الحساب...</span>
+                    ) : shippingCost !== null && shippingCost > 0 ? (
+                      <span className="font-bold text-gray-900">{shippingCost} {tCommon("currency")}</span>
+                    ) : (
+                      <span className="font-semibold text-purple-600">{tCart("calculated")}</span>
+                    )}
                   </div>
+                  {shippingCost === null && !calculatingShipping && effectiveSelectedAddress && (
+                    <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg text-sm border border-amber-200">
+                      <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-amber-800 leading-relaxed">
+                        <strong className="font-semibold">ملاحظة مهمة:</strong> السعر المعروض لا يشمل تكلفة الشحن. سيتم حساب تكلفة الشحن وإضافتها عند التأكيد النهائي للطلب.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex justify-between items-center text-xl font-bold bg-gray-50 -mx-6 -mb-6 px-6 py-5">
                   <span className="text-gray-900">{tCart("total")}</span>
-                  <span className="text-purple-600">{totalAmount} {tCommon("currency")}</span>
+                  <span className="text-purple-600">
+                    {shippingCost !== null && shippingCost > 0
+                      ? totalAmount + shippingCost
+                      : totalAmount
+                    } {tCommon("currency")}
+                    {shippingCost === null && (
+                      <span className="text-sm font-normal text-gray-500 mr-2">+ شحن</span>
+                    )}
+                  </span>
                 </div>
               </div>
 

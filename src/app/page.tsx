@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useGetProductsQuery } from "@/store/api/productsApi";
 import { useGetCategoriesQuery } from "@/store/api/categoriesApi";
 import { Button } from "@/components/ui/button";
@@ -84,8 +85,8 @@ export default function HomePage() {
               <p className="text-xl text-gray-600">{t("exploreCategories") || "اكتشف تشكيلتنا المتنوعة"}</p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {categories.map((category, index) => {
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categories.map((category) => {
                 const categoryName = typeof category.name === "string"
                   ? category.name
                   : (category.name as any)?.[locale] || (category.name as any)?.ar || "";
@@ -94,30 +95,21 @@ export default function HomePage() {
                   <Link
                     key={category._id}
                     href={`/products?category=${category._id}`}
-                    className={`group relative overflow-hidden rounded-3xl aspect-[4/5] ${index === 0
-                      ? "bg-gradient-to-br from-blue-500 to-indigo-600"
-                      : index === 1
-                        ? "bg-gradient-to-br from-purple-500 to-pink-600"
-                        : index === 2
-                          ? "bg-gradient-to-br from-orange-500 to-red-600"
-                          : index === 3
-                            ? "bg-gradient-to-br from-green-500 to-emerald-600"
-                            : index === 4
-                              ? "bg-gradient-to-br from-cyan-500 to-blue-600"
-                              : "bg-gradient-to-br from-violet-500 to-purple-600"
-                      } transition-transform hover:scale-[1.02] shadow-xl hover:shadow-2xl`}
+                    className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-purple-300 hover:shadow-lg"
                   >
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                    <div className="absolute inset-0 flex items-end p-8">
-                      <div>
-                        <h3 className="text-4xl font-bold text-white mb-2 transform group-hover:translate-x-2 transition-transform">
-                          {categoryName}
-                        </h3>
-                        <p className="text-white/80 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          استكشف الآن <ArrowRight className="w-4 h-4" />
-                        </p>
-                      </div>
+                    {/* Category Name */}
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {categoryName}
+                    </h3>
+
+                    {/* CTA */}
+                    <div className="flex items-center gap-1.5 text-sm text-gray-600 group-hover:text-purple-600 transition-colors">
+                      <span>استكشف الآن</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-[-2px] transition-transform" />
                     </div>
+
+                    {/* Minimal Accent Line */}
+                    <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-purple-600 to-pink-600 transition-all duration-300 group-hover:w-full" />
                   </Link>
                 );
               })}

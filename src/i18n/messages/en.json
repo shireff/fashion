@@ -1,6 +1,6 @@
 {
   "common": {
-    "siteName": "Fashion",
+    "siteName": "Hedma",
     "home": "Home",
     "products": "Products",
     "product": "Product",
@@ -122,6 +122,9 @@
     "subtotal": "Subtotal",
     "shipping": "Shipping",
     "calculated": "Calculated at checkout",
+    "shippingNote": "Price shown excludes shipping cost",
+    "shippingNoteDetails": "Note: The price shown does not include shipping cost. Shipping cost will be calculated and added upon confirmation.",
+    "calculating": "Calculating...",
     "total": "Total",
     "checkout": "Checkout",
     "continueShopping": "Continue Shopping",
@@ -339,7 +342,8 @@
     "returnPolicy": "Return Policy",
     "followUs": "Follow Us",
     "workingHours": "Working Hours",
-    "copyright": "© {year} {siteName}. All rights reserved"
+    "copyright": "© {year} {siteName}. All rights reserved",
+    "allRightsReserved": "All rights reserved"
   },
   "about": {
     "title": "About {siteName}",
@@ -502,6 +506,9 @@
     "categories": "Categories",
     "categoriesManagement": "Categories Management",
     "categoriesDescription": "Add, edit and delete categories",
+    "shipping": "Shipping",
+    "shippingManagement": "Shipping Management",
+    "shippingDescription": "Manage shipping rates for governorates and cities",
     "addCategory": "Add New Category",
     "editCategory": "Edit Category",
     "deleteCategory": "Delete Category",

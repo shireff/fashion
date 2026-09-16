@@ -7,8 +7,8 @@ import type { Metadata } from "next";
 
 export const siteConfig = {
   // Basic Info
-  name: "Fashion",
-  nameAr: "فاشون",
+  name: "Hedma",
+  nameAr: "هِدمة",
   slogan: "Modern Fashion, Timeless Style",
   sloganAr: "أزياء عصرية، أناقة خالدة",
   description: "Modern fashion store offering trendy clothing and accessories for men and women",
@@ -84,8 +84,8 @@ export const siteConfig = {
 
   // Business Info
   business: {
-    companyName: "Fashion Store LLC",
-    companyNameAr: "شركة فاشون للأزياء",
+    companyName: "Hedma Store LLC",
+    companyNameAr: "شركة هِدمة للأزياء",
     taxNumber: "123-456-789",
     commercialRegister: "987654321",
     foundedYear: 2024,

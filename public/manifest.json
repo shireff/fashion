@@ -1,7 +1,7 @@
 {
-  "name": "فاشون - لوحة التحكم",
-  "short_name": "فاشون Admin",
-  "description": "لوحة تحكم إدارة متجر فاشون",
+  "name": "هِدمة - لوحة التحكم",
+  "short_name": "هِدمة Admin",
+  "description": "لوحة تحكم إدارة متجر هِدمة",
   "start_url": "/admin/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",

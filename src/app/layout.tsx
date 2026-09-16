@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cairo, Geist_Mono, Geist } from "next/font/google";
+import { Tajawal, Geist_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import "./error-handler";
 import "./web-vitals-polyfill";
@@ -15,9 +15,11 @@ import { Toaster } from "sonner";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
-const cairo = Cairo({
-  variable: "--font-cairo",
+const tajawal = Tajawal({
+  variable: "--font-tajawal",
   subsets: ["arabic", "latin"],
+  weight: ["200", "300", "400", "500", "700", "800", "900"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -35,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang={locale}
       dir={locale === "ar" ? "rtl" : "ltr"}
-      className={cn("h-full", "antialiased", cairo.variable, geistMono.variable, "font-sans", geist.variable)}
+      className={cn("h-full", "antialiased", tajawal.variable, geistMono.variable, "font-sans", geist.variable)}
     >
       <head>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />

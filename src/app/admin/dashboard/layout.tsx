@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Bell,
+  Truck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLogoutMutation } from "@/store/api/authApi";
@@ -116,6 +117,11 @@ export default function AdminDashboardLayout({
       href: "/admin/dashboard/categories",
       label: t("admin.categories"),
       icon: Grid3x3,
+    },
+    {
+      href: "/admin/dashboard/shipping",
+      label: t("admin.shipping"),
+      icon: Truck,
     },
   ];
 

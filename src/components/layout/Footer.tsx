@@ -40,101 +40,22 @@ export function Footer() {
   const contactInfo = getContactInfo(locale);
 
   return (
-    <footer className="border-t bg-gray-50 mt-auto">
+    <footer className="border-t bg-gray-900 text-white mt-auto">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div>
-            <h3 className="text-xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          {/* Brand & Description */}
+          <div className="space-y-4">
+            <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
               {locale === "ar" ? siteConfig.nameAr : siteConfig.name}
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              {locale === "ar" ? siteConfig.descriptionAr : siteConfig.description}
+            <p className="text-sm text-gray-300 leading-relaxed">
+              {locale === "ar" ? siteConfig.sloganAr : siteConfig.slogan}
             </p>
-            <p className="text-xs text-gray-500">
-              {siteConfig.business.companyNameAr}
-            </p>
-          </div>
 
-          {/* Contact Info */}
-          <div>
-            <h4 className="font-semibold mb-4">{t("contactUs")}</h4>
-            <ul className="space-y-3 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <Mail className="w-4 h-4 mt-1 shrink-0" />
-                <a href={`mailto:${siteConfig.contact.sharif.email}`} className="hover:text-primary transition-colors">
-                  {siteConfig.contact.sharif.email}
-                </a>
-              </li>
-              <li className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 shrink-0" />
-                  <span className="font-medium">{locale === "ar" ? "أ. كاراس" : "Mr. Karas"}</span>
-                </div>
-                <a
-                  href={siteConfig.contact.karas.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors mr-6"
-                  dir="ltr"
-                >
-                  {siteConfig.contact.karas.phoneFormatted}
-                </a>
-              </li>
-              <li className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 shrink-0" />
-                  <span className="font-medium">{locale === "ar" ? "أ. أفرام" : "Mr. Avram"}</span>
-                </div>
-                <a
-                  href={siteConfig.contact.avram.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors mr-6"
-                  dir="ltr"
-                >
-                  {siteConfig.contact.avram.phoneFormatted}
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 mt-1 shrink-0" />
-                <span>{contactInfo.address}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-semibold mb-4">{t("quickLinks")}</h4>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li>
-                <Link href="/about" className="hover:text-primary transition-colors">
-                  {t("aboutUs")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-primary transition-colors">
-                  {t("contactUs")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-primary transition-colors">
-                  {t("privacyPolicy")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-primary transition-colors">
-                  {t("termsConditions")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Social Media */}
-          <div>
-            <h4 className="font-semibold mb-4">{t("followUs")}</h4>
-            <div className="flex gap-3 flex-wrap">
-              {socialLinks.map(({ platform, url }) => {
+            {/* Social Media */}
+            <div className="flex gap-3 pt-2">
+              {socialLinks.slice(0, 4).map(({ platform, url }) => {
                 const Icon = SocialIcons[platform as SocialPlatform];
                 if (!Icon) return null;
 
@@ -144,28 +65,101 @@ export function Footer() {
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 hover:bg-indigo-600 hover:text-white transition-colors"
+                    className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
                     aria-label={platform}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-4 h-4" />
                   </a>
                 );
               })}
             </div>
+          </div>
 
-            <div className="mt-6">
-              <h5 className="text-sm font-semibold mb-2">{t("workingHours")}</h5>
-              <p className="text-xs text-gray-600">{contactInfo.workingHours}</p>
-            </div>
+          {/* Quick Links */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-lg">{t("quickLinks")}</h4>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li>
+                <Link href="/" className="hover:text-purple-400 transition-colors inline-flex items-center gap-2">
+                  {tCommon("home")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/products" className="hover:text-purple-400 transition-colors inline-flex items-center gap-2">
+                  {tCommon("products")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-purple-400 transition-colors inline-flex items-center gap-2">
+                  {t("aboutUs")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-purple-400 transition-colors inline-flex items-center gap-2">
+                  {t("contactUs")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-purple-400 transition-colors inline-flex items-center gap-2">
+                  {t("privacyPolicy")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-lg">{t("contactUs")}</h4>
+            <ul className="space-y-3 text-sm text-gray-300">
+              <li className="flex items-start gap-2">
+                <Mail className="w-4 h-4 mt-0.5 shrink-0 text-purple-400" />
+                <a
+                  href={`mailto:${siteConfig.contact.sharif.email}`}
+                  className="hover:text-purple-400 transition-colors break-all"
+                >
+                  {siteConfig.contact.sharif.email}
+                </a>
+              </li>
+
+              <li className="flex items-start gap-2">
+                <Phone className="w-4 h-4 mt-0.5 shrink-0 text-purple-400" />
+                <div className="flex flex-col gap-1">
+                  <a
+                    href={siteConfig.contact.karas.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-purple-400 transition-colors"
+                    dir="ltr"
+                  >
+                    {siteConfig.contact.karas.phoneFormatted}
+                  </a>
+                  <a
+                    href={siteConfig.contact.avram.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-purple-400 transition-colors"
+                    dir="ltr"
+                  >
+                    {siteConfig.contact.avram.phoneFormatted}
+                  </a>
+                </div>
+              </li>
+
+              <li className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-purple-400" />
+                <span className="leading-relaxed">{contactInfo.address}</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-8 text-center text-sm text-gray-600">
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
           <p>
-            {t("copyright", {
-              year: new Date().getFullYear(),
-              siteName: locale === "ar" ? siteConfig.nameAr : siteConfig.name
-            })}
+            © {new Date().getFullYear()} {locale === "ar" ? siteConfig.nameAr : siteConfig.name}. {t("allRightsReserved")}
+          </p>
+          <p className="text-xs">
+            {siteConfig.business.companyNameAr}
           </p>
         </div>
       </div>

@@ -20,10 +20,39 @@ export const shippingApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+
+    createShippingZone: builder.mutation<any, any>({
+      query: (data) => ({
+        url: API_ENDPOINTS.SHIPPING.ZONES,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Shipping"],
+    }),
+
+    updateShippingZone: builder.mutation<any, { id: string; data: any }>({
+      query: ({ id, data }) => ({
+        url: `${API_ENDPOINTS.SHIPPING.ZONES}/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Shipping"],
+    }),
+
+    deleteShippingZone: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `${API_ENDPOINTS.SHIPPING.ZONES}/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Shipping"],
+    }),
   }),
 });
 
 export const {
   useGetShippingZonesQuery,
   useCalculateShippingMutation,
+  useCreateShippingZoneMutation,
+  useUpdateShippingZoneMutation,
+  useDeleteShippingZoneMutation,
 } = shippingApi;
