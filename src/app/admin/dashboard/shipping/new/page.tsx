@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowRight, MapPin, DollarSign } from "lucide-react";
+import { toast } from "sonner";
 import { useCreateShippingZoneMutation } from "@/store/api/shippingApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,12 +28,12 @@ export default function NewShippingZonePage() {
     e.preventDefault();
 
     if (!governorate.trim()) {
-      alert("من فضلك أدخل اسم المحافظة");
+      toast.error(t("governorateNameRequired"));
       return;
     }
 
     if (shippingFee < 0) {
-      alert("من فضلك أدخل تكلفة شحن صحيحة");
+      toast.error(t("shippingFeeRequired"));
       return;
     }
 
@@ -43,7 +44,7 @@ export default function NewShippingZonePage() {
       .filter(Boolean);
 
     if (citiesList.length === 0) {
-      alert("من فضلك أضف مدينة واحدة على الأقل");
+      toast.error(t("citiesListRequired"));
       return;
     }
 
@@ -61,9 +62,11 @@ export default function NewShippingZonePage() {
         isActive,
       }).unwrap();
 
+      toast.success(t("shippingCreated"));
       router.push("/admin/dashboard/shipping");
-    } catch (err: any) {
-      alert(err?.data?.message || "فشل إضافة تسعيرة الشحن");
+    } catch (error) {
+      const errorMessage = (error as { data?: { message?: string } })?.data?.message;
+      toast.error(errorMessage || t("shippingCreateFailed"));
     }
   };
 
@@ -76,10 +79,10 @@ export default function NewShippingZonePage() {
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowRight className="w-4 h-4 ml-1" />
-          العودة لإدارة الشحن
+          {t("backToShipping")}
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">إضافة تسعيرة شحن جديدة</h1>
-        <p className="text-gray-600 mt-2">أضف تسعيرة الشحن للمحافظة والمدن التابعة لها</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t("addGovernorate")}</h1>
+        <p className="text-gray-600 mt-2">{t("shippingDescription")}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -88,7 +91,7 @@ export default function NewShippingZonePage() {
           <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <MapPin className="w-5 h-5" />
-              معلومات المحافظة
+              {t("governorateInfo")}
             </h2>
           </div>
 
@@ -96,19 +99,19 @@ export default function NewShippingZonePage() {
             {/* Governorate Name */}
             <div>
               <Label htmlFor="governorate" className="text-lg font-semibold">
-                اسم المحافظة <span className="text-red-500">*</span>
+                {t("governorateName")} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="governorate"
                 type="text"
                 value={governorate}
                 onChange={(e) => setGovernorate(e.target.value)}
-                placeholder="مثال: القاهرة"
+                placeholder={t("governorateNameRequired")}
                 className="mt-2"
                 required
               />
               <p className="text-sm text-gray-500 mt-1">
-                سيتم تطبيق نفس تكلفة الشحن على جميع مدن هذه المحافظة
+                {t("shippingFeeNote")}
               </p>
             </div>
 
@@ -116,7 +119,7 @@ export default function NewShippingZonePage() {
             <div>
               <Label htmlFor="shippingFee" className="text-lg font-semibold flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-purple-600" />
-                تكلفة الشحن ({tCommon("currency")}) <span className="text-red-500">*</span>
+                {t("shippingFee")} ({tCommon("currency")}) <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="shippingFee"
@@ -130,7 +133,7 @@ export default function NewShippingZonePage() {
                 required
               />
               <p className="text-sm text-gray-500 mt-1">
-                هذه التكلفة ستطبق على جميع المدن في المحافظة
+                {t("shippingFeeNote")}
               </p>
             </div>
 
@@ -145,10 +148,10 @@ export default function NewShippingZonePage() {
               />
               <div>
                 <Label htmlFor="isActive" className="font-semibold cursor-pointer">
-                  تفعيل التسعيرة
+                  {t("activateZone")}
                 </Label>
                 <p className="text-sm text-gray-600 mt-1">
-                  إذا كانت نشطة، سيتم حساب الشحن تلقائياً للعملاء
+                  {t("activateZoneNote")}
                 </p>
               </div>
             </div>
@@ -158,25 +161,25 @@ export default function NewShippingZonePage() {
         {/* Cities List */}
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
-            <h2 className="text-xl font-bold text-white">المدن التابعة للمحافظة</h2>
+            <h2 className="text-xl font-bold text-white">{t("citiesList")}</h2>
           </div>
 
           <div className="p-6 space-y-4">
             <div>
               <Label htmlFor="cities" className="font-semibold">
-                قائمة المدن <span className="text-red-500">*</span>
+                {t("citiesList")} <span className="text-red-500">*</span>
               </Label>
               <Textarea
                 id="cities"
                 value={citiesText}
                 onChange={(e) => setCitiesText(e.target.value)}
-                placeholder="أدخل أسماء المدن، كل مدينة في سطر أو افصل بفاصلة&#10;مثال:&#10;مدينة نصر&#10;المعادي&#10;الهرم&#10;التجمع الخامس"
+                placeholder={t("citiesListPlaceholder")}
                 rows={8}
                 className="mt-2 font-mono"
                 required
               />
               <p className="text-sm text-gray-500 mt-2">
-                💡 <strong>ملاحظة:</strong> يمكنك كتابة مدينة واحدة فقط أو عدة مدن (افصل بفاصلة أو سطر جديد)
+                💡 <strong>{t("citiesListNote")}</strong>
               </p>
             </div>
 
@@ -184,7 +187,7 @@ export default function NewShippingZonePage() {
             {citiesText.trim() && (
               <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
                 <h3 className="font-semibold text-purple-900 mb-2">
-                  معاينة ({citiesText.split(/[,\n]/).filter((c) => c.trim()).length} مدينة)
+                  {t("citiesPreview")} ({citiesText.split(/[,\n]/).filter((c) => c.trim()).length} {t("citiesCount")})
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {citiesText
@@ -212,7 +215,7 @@ export default function NewShippingZonePage() {
             disabled={isLoading}
             className="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-lg py-6"
           >
-            {isLoading ? "جاري الحفظ..." : "حفظ التسعيرة"}
+            {isLoading ? t("saving") : t("saveZone")}
           </Button>
           <Button
             type="button"
