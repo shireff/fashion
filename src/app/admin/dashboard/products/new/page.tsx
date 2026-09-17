@@ -214,6 +214,11 @@ export default function NewProductPage() {
   const [uploadingImages, setUploadingImages] = useState(false);
   const [variants, setVariants] = useState<Variant[]>([]);
 
+  // Simplified Variants Matrix
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<typeof SIZES[number][]>([]);
+  const [variantMatrix, setVariantMatrix] = useState<Record<string, string>>({});
+
   const [modal, setModal] = useState({
     isOpen: false,
     type: "success" as "success" | "error",
@@ -270,7 +275,60 @@ export default function NewProductPage() {
     setImages(images.filter((_, i) => i !== index));
   };
 
+  // Toggle color selection
+  const toggleColor = (colorHex: string) => {
+    if (selectedColors.includes(colorHex)) {
+      setSelectedColors(selectedColors.filter((c) => c !== colorHex));
+    } else {
+      setSelectedColors([...selectedColors, colorHex]);
+    }
+  };
+
+  // Toggle size selection
+  const toggleSize = (size: typeof SIZES[number]) => {
+    if (selectedSizes.includes(size)) {
+      setSelectedSizes(selectedSizes.filter((s) => s !== size));
+    } else {
+      setSelectedSizes([...selectedSizes, size]);
+    }
+  };
+
+  // Generate variants from matrix
+  const generateVariantsFromMatrix = () => {
+    const newVariants: Variant[] = [];
+
+    selectedColors.forEach((colorHex) => {
+      selectedSizes.forEach((size) => {
+        const key = `${colorHex}-${size}`;
+        const quantity = parseInt(variantMatrix[key] || "0");
+
+        // Only create variant if quantity > 0
+        if (quantity > 0) {
+          const colorData = COLORS.find((c) => c.hex === colorHex);
+          if (colorData) {
+            newVariants.push({
+              id: `${colorHex}-${size}`,
+              color: colorHex,
+              colorNameAr: colorData.ar,
+              colorNameEn: colorData.en,
+              size,
+              quantity,
+              sku: generateSKU(
+                formData.nameEn || "Product",
+                colorHex.replace("#", ""),
+                size
+              ),
+            });
+          }
+        }
+      });
+    });
+
+    setVariants(newVariants);
+  };
+
   const addVariant = () => {
+    // Keep for backward compatibility but not used in new UI
     const newVariant: Variant = {
       id: Date.now().toString(),
       color: "#000000",
@@ -281,41 +339,6 @@ export default function NewProductPage() {
       sku: generateSKU(formData.nameEn || "Product", "000000", "M"),
     };
     setVariants([...variants, newVariant]);
-  };
-
-  const updateVariant = (id: string, field: keyof Variant, value: any) => {
-    setVariants(
-      variants.map((variant) => {
-        if (variant.id === id) {
-          const updated = { ...variant, [field]: value };
-
-          // Auto-update color names when color hex changes
-          if (field === "color") {
-            const colorData = COLORS.find((c) => c.hex === value);
-            if (colorData) {
-              updated.colorNameAr = colorData.ar;
-              updated.colorNameEn = colorData.en;
-            }
-          }
-
-          // Auto-generate SKU when color or size changes
-          if (field === "color" || field === "size") {
-            updated.sku = generateSKU(
-              formData.nameEn || "Product",
-              updated.color.replace("#", ""),
-              updated.size
-            );
-          }
-
-          return updated;
-        }
-        return variant;
-      })
-    );
-  };
-
-  const removeVariant = (id: string) => {
-    setVariants(variants.filter((v) => v.id !== id));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -732,133 +755,198 @@ export default function NewProductPage() {
             </div>
           </Card>
 
-          {/* Variants - Keep rest of the code same */}
+          {/* Variants - Simplified Matrix */}
           <Card className="p-4 sm:p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-2">
+            <div className="mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-2 mb-2">
                 <span className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-sm font-bold">
                   4
                 </span>
                 {t("admin.variants")} <span className="text-red-500">*</span>
-                <span className="text-xs font-normal text-gray-500">({variants.length})</span>
+                <span className="text-xs font-normal text-gray-500">({variants.length} {locale === "ar" ? "متغير" : "variants"})</span>
               </h2>
-              <Button type="button" onClick={addVariant} size="sm">
-                <Plus className="w-4 h-4 ml-1" />
-                {t("admin.addVariant")}
-              </Button>
+              <p className="text-xs text-gray-600">
+                💡 {locale === "ar" ? "اختر الألوان والمقاسات، ثم أدخل الكمية لكل تركيبة" : "Select colors & sizes, then enter quantity for each combination"}
+              </p>
             </div>
 
-            {variants.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 text-sm">
-                {t("admin.noVariants")}
+            {/* Color Selection */}
+            <div className="mb-4 space-y-2">
+              <Label className="text-sm font-medium">{locale === "ar" ? "اختر الألوان" : "Select Colors"}</Label>
+              <div className="flex flex-wrap gap-2">
+                {COLORS.map((color) => {
+                  const isSelected = selectedColors.includes(color.hex);
+                  return (
+                    <button
+                      key={color.hex}
+                      type="button"
+                      onClick={() => toggleColor(color.hex)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 text-xs transition-all ${isSelected
+                        ? "border-purple-600 bg-purple-50"
+                        : "border-gray-200 bg-white hover:border-gray-300"
+                        }`}
+                    >
+                      <div
+                        className="w-5 h-5 rounded border-2 border-gray-300"
+                        style={{ backgroundColor: color.hex }}
+                      />
+                      <span className="font-medium">{locale === "ar" ? color.ar : color.en}</span>
+                    </button>
+                  );
+                })}
               </div>
-            ) : (
+            </div>
+
+            {/* Size Selection */}
+            <div className="mb-4 space-y-2">
+              <Label className="text-sm font-medium">{locale === "ar" ? "اختر المقاسات" : "Select Sizes"}</Label>
+              <div className="flex flex-wrap gap-2">
+                {SIZES.map((size) => {
+                  const isSelected = selectedSizes.includes(size);
+                  return (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => toggleSize(size)}
+                      className={`px-4 py-1.5 rounded-lg border-2 text-sm font-medium transition-all ${isSelected
+                        ? "border-purple-600 bg-purple-600 text-white"
+                        : "border-gray-200 bg-white hover:border-gray-300"
+                        }`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Variants Matrix */}
+            {selectedColors.length > 0 && selectedSizes.length > 0 ? (
               <div className="space-y-3">
-                {variants.map((variant, index) => (
-                  <div
-                    key={variant.id}
-                    className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200 space-y-3"
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">
+                    {locale === "ar" ? "الكميات (أدخل 0 لإلغاء المتغير)" : "Quantities (enter 0 to skip variant)"}
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={generateVariantsFromMatrix}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-gray-600">
-                        {t("admin.variant")} #{index + 1}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => removeVariant(variant.id)}
-                        className="text-red-600 hover:text-red-700 p-1"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    ✓ {locale === "ar" ? "تطبيق" : "Apply"}
+                  </Button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <div className="inline-block min-w-full border rounded-lg">
+                    {/* Header */}
+                    <div className="bg-gray-50 border-b">
+                      <div className="flex">
+                        <div className="w-24 sm:w-32 p-2 border-l font-medium text-xs text-gray-600">
+                          {locale === "ar" ? "المقاس / اللون" : "Size / Color"}
+                        </div>
+                        {selectedColors.map((colorHex) => {
+                          const color = COLORS.find((c) => c.hex === colorHex)!;
+                          return (
+                            <div
+                              key={colorHex}
+                              className="w-20 sm:w-24 p-2 border-l text-center relative group"
+                            >
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  // Remove color from selection
+                                  setSelectedColors(selectedColors.filter((c) => c !== colorHex));
+                                  // Remove all entries for this color from matrix
+                                  const newMatrix = { ...variantMatrix };
+                                  selectedSizes.forEach((size) => {
+                                    delete newMatrix[`${colorHex}-${size}`];
+                                  });
+                                  setVariantMatrix(newMatrix);
+                                }}
+                                className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                                title={locale === "ar" ? "حذف اللون" : "Remove color"}
+                              >
+                                ×
+                              </button>
+                              <div className="flex flex-col items-center gap-1">
+                                <div
+                                  className="w-6 h-6 rounded border-2 border-gray-300"
+                                  style={{ backgroundColor: colorHex }}
+                                />
+                                <span className="text-[10px] font-medium truncate max-w-full">
+                                  {locale === "ar" ? color.ar : color.en}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                      {/* Color */}
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">{t("admin.color")}</Label>
-                        <Select
-                          value={variant.color}
-                          onValueChange={(value) => updateVariant(variant.id, "color", value)}
-                        >
-                          <SelectTrigger className="text-xs h-9">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="w-4 h-4 rounded border"
-                                style={{ backgroundColor: variant.color }}
-                              />
-                              <span className="truncate">{variant.colorNameAr}</span>
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {COLORS.map((color) => (
-                              <SelectItem key={color.hex} value={color.hex} className="text-xs">
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className="w-4 h-4 rounded border"
-                                    style={{ backgroundColor: color.hex }}
-                                  />
-                                  <span>{locale === "ar" ? color.ar : color.en}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Size */}
-                      <div className="space-y-1.5">
-                        <Label className="text-xs">{t("admin.size")}</Label>
-                        <Select
-                          value={variant.size}
-                          onValueChange={(value) =>
-                            updateVariant(variant.id, "size", value)
-                          }
-                        >
-                          <SelectTrigger className="text-xs h-9">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {SIZES.map((size) => (
-                              <SelectItem key={size} value={size} className="text-xs">
-                                {size}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Quantity */}
-                      <div className="space-y-1.5">
-                        <Label htmlFor={`quantity-${variant.id}`} className="text-xs">
-                          {t("admin.quantity")}
-                        </Label>
-                        <Input
-                          id={`quantity-${variant.id}`}
-                          type="number"
-                          min="0"
-                          value={variant.quantity}
-                          onChange={(e) =>
-                            updateVariant(variant.id, "quantity", parseInt(e.target.value) || 0)
-                          }
-                          className="text-xs h-9"
-                        />
-                      </div>
-
-                      {/* SKU - Auto Generated */}
-                      <div className="col-span-2 sm:col-span-3 lg:col-span-3 space-y-1.5">
-                        <Label className="text-xs flex items-center gap-1">
-                          {t("admin.sku")}
-                          <span className="text-green-600 text-[10px]">({t("admin.autoGenerated")})</span>
-                        </Label>
-                        <Input
-                          value={variant.sku}
-                          readOnly
-                          className="text-xs h-9 bg-gray-100 font-mono"
-                        />
-                      </div>
+                    {/* Body */}
+                    <div>
+                      {selectedSizes.map((size) => (
+                        <div key={size} className="flex border-b last:border-b-0">
+                          <div className="w-24 sm:w-32 p-2 border-l font-bold text-sm flex items-center justify-center bg-gray-50 relative group">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                // Remove size from selection
+                                setSelectedSizes(selectedSizes.filter((s) => s !== size));
+                                // Remove all entries for this size from matrix
+                                const newMatrix = { ...variantMatrix };
+                                selectedColors.forEach((colorHex) => {
+                                  delete newMatrix[`${colorHex}-${size}`];
+                                });
+                                setVariantMatrix(newMatrix);
+                              }}
+                              className="absolute top-1 right-1 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                              title={locale === "ar" ? "حذف المقاس" : "Remove size"}
+                            >
+                              ×
+                            </button>
+                            {size}
+                          </div>
+                          {selectedColors.map((colorHex) => {
+                            const key = `${colorHex}-${size}`;
+                            return (
+                              <div key={key} className="w-20 sm:w-24 p-1.5 border-l">
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  placeholder="0"
+                                  value={variantMatrix[key] || ""}
+                                  onChange={(e) =>
+                                    setVariantMatrix({
+                                      ...variantMatrix,
+                                      [key]: e.target.value,
+                                    })
+                                  }
+                                  className="text-center text-sm h-8 px-1"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
+                </div>
+
+                {variants.length > 0 && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-sm text-green-800">
+                      ✓ {variants.length} {locale === "ar" ? "متغير تم إنشاؤه" : "variants generated"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500 text-sm border-2 border-dashed rounded-lg">
+                {locale === "ar"
+                  ? "اختر على الأقل لون واحد ومقاس واحد للبدء"
+                  : "Select at least one color and one size to begin"}
               </div>
             )}
           </Card>
